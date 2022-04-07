@@ -5,7 +5,8 @@ class State extends GlobalSimulation{
 	
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
-	public int numberInQueue = 0, accumulated = 0, noMeasurements = 0;
+	public int AsInQueue = 0;
+	public int BsInQueue = 0;
 
 	Random slump = new Random(); // This is just a random number generator
 	
@@ -14,14 +15,17 @@ class State extends GlobalSimulation{
 	// from the event list in the main loop. 
 	public void treatEvent(Event x){
 		switch (x.eventType){
-			case ARRIVAL:
-				arrival();
+			case ARRIVE_A:
+				arriveA();
 				break;
-			case READY:
-				ready();
+			case DONE_A:
+				doneA();
 				break;
-			case MEASURE:
-				measure();
+			case ARRIVE_B:
+				arriveB();
+				break;
+			case DONE_B:
+				doneB();
 				break;
 		}
 	}
@@ -31,22 +35,37 @@ class State extends GlobalSimulation{
 	// have been placed in the case in treatEvent, but often it is simpler to write a method if 
 	// things are getting more complicated than this.
 	
-	private void arrival(){
-		if (numberInQueue == 0)
-			insertEvent(READY, time + 2*slump.nextDouble());
-		numberInQueue++;
-		insertEvent(ARRIVAL, time + 2.5*slump.nextDouble());
+    private void serveNext() {
+		if (BsInQueue > 0) {
+			insertEvent(DONE_B, time + 0.004);
+        }
+        else if (AsInQueue > 0) {
+			insertEvent(DONE_A, time + 0.002);
+        }
+    }
+
+	private void arriveA(){
+		AsInQueue++;
+		if (AsInQueue == 1 && BsInQueue == 0) {
+            serveNext();
+        }
+		insertEvent(ARRIVE_A, time + 1.0/150);
 	}
 	
-	private void ready(){
-		numberInQueue--;
-		if (numberInQueue > 0)
-			insertEvent(READY, time + 2*slump.nextDouble());
+	private void doneA(){
+		AsInQueue--;
+        serveNext();
 	}
 	
-	private void measure(){
-		accumulated = accumulated + numberInQueue;
-		noMeasurements++;
-		insertEvent(MEASURE, time + slump.nextDouble()*10);
+	private void arriveB(){
+		BsInQueue++;
+		if (AsInQueue == 0 && BsInQueue == 1) {
+            serveNext();
+        }
+	}
+
+	private void doneB(){
+		BsInQueue--;
+        serveNext();
 	}
 }
