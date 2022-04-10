@@ -1,5 +1,5 @@
-// Denna klass definierar signallistan. Om man vill skicka mer information i signalen ï¿½n minimum, sï¿½ kan
-// man skriva ytterligare variante av SendSignal som innehï¿½ller fler parametrar.
+// Denna klass definierar signallistan. Om man vill skicka mer information i signalen än minimum, så kan
+// man skriva ytterligare variante av SendSignal som innehåller fler parametrar.
 
 // This class defines the signal list. If one wants to send more information than here,
 // one can add the extra information in the Signal class and write an extra sendSignal method 
@@ -14,13 +14,12 @@ public class SignalList{
     	list.next = last;
 	}
 
-	public static void SendSignal(int type, Proc dest, double arrtime, boolean special){
+	public static void SendSignal(int type, Proc dest, double arrtime){
  	Signal dummy, predummy;
  	Signal newSignal = new Signal();
  	newSignal.signalType = type;
  	newSignal.destination = dest;
  	newSignal.arrivalTime = arrtime;
-	newSignal.special = special;
  	predummy = list;
  	dummy = list.next;
  	while ((dummy.arrivalTime < newSignal.arrivalTime) & (dummy != last)){
