@@ -4,29 +4,39 @@ import java.io.*;
 // This class defines a simple queuing system with one server. It inherits Proc so that we can use time and the
 // signal names without dot notation
 class QS extends Proc{
-	public int numberInQueue = 0, accumulated, noMeasurements;
+	public int accumulated, noMeasurements;
 	public Proc sendTo;
-	Random slump = new Random();
 
+	private double lambda = 4; // 4 minutes
+	private Queue<Double> queue = new LinkedList<>();
+	private int special_in_Q = 0; private int norm_in_Q = 0;
+	private int special_finished = 0; private int norm_finished = 0;
+	private int special_totaltime = 0; private int norm_totaltime = 0;
+
+	// .size() has o(1) timecomplexity
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
-
-			case ARRIVAL:{
-				numberInQueue++;
-				if (numberInQueue == 1){
-					SignalList.SendSignal(READY,this, time + 0.2*slump.nextDouble());
+			
+			case ARRIVAL:
+				queue.add(time);
+				if (queue.size() == 1 || (x.special && special_in_Q == 0)){
+					SignalList.SendSignal(READY,this, time + expo(4), x.special);
 				}
-			} break;
+			 	break;
 
-			case READY:{
+			case READY:
+				if(x.special && special_in_Q > 0)
+
 				numberInQueue--;
+
+				// why? For future if expand processes?
 				if (sendTo != null){
 					SignalList.SendSignal(ARRIVAL, sendTo, time);
 				}
-				if (numberInQueue > 0){
-					SignalList.SendSignal(READY, this, time + 0.2*slump.nextDouble());
+				if (queue.size() > 0){
+					SignalList.SendSignal(READY, this, time + expo(lambda), x.next.special);
 				}
-			} break;
+			 	break;
 
 			case MEASURE:{
 				noMeasurements++;
