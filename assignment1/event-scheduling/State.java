@@ -54,6 +54,11 @@ class State extends GlobalSimulation{
 	private Random random = new Random();
 
 	
+    public State() {
+        delayDistribution = Distribution.Constant;
+        priority = Priority.B;
+    }
+
     public State(Args args) {
         delayDistribution = args.delayDistribution;
         priority = args.priority;
@@ -152,4 +157,50 @@ class State extends GlobalSimulation{
         measurements.add(asInQueue + bsInQueue);
         insertEvent(MEASURE, time + 0.1);
 	}
+
+
+    public static void printVerification() {
+        System.out.println("VERIFICATION OF EXPONENTIAL DISTRIBUTION");
+        var state = new State();
+
+        final int numBuckets = 20;
+        final int bucketSize = 2;
+        var buckets =
+            new ArrayList<Integer>(Collections.nCopies(numBuckets, 0));
+
+        final double lambda = 0.1;
+        final int numSamples = 10000;
+
+        double total = 0.0;
+
+        for(int i = 0; i < numSamples; ++i) {
+            final double sample = state.expRandom(lambda);
+            if(sample < 0.0) {
+                System.err.println("ERROR: expRandom generated value less than zero");
+                return;
+            }
+
+            total += sample;
+
+            final int bucketIndex = (int)(sample/bucketSize);
+            if(bucketIndex < numBuckets) {
+                buckets.set(
+                        bucketIndex,
+                        buckets.get(bucketIndex)+1);
+            }
+        }
+
+        final double mean = total / numSamples;
+
+        System.out.printf("Lambda: %f\n", lambda);
+        System.out.printf("Mean: %f\n", mean);
+
+        System.out.println("Distribution:");
+        final int max = buckets.stream().mapToInt(x->x).max().getAsInt();
+        for(int bucket : buckets) {
+            int columns = (int)(50.0 * bucket / max);
+            var bar = "=".repeat(columns);
+            System.out.println(bar);
+        }
+    }
 }

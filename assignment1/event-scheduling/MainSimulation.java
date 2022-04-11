@@ -9,6 +9,12 @@ public class MainSimulation extends GlobalSimulation{
         argsList.add(new State.Args(State.Distribution.Exponential, State.Priority.B));
         argsList.add(new State.Args(State.Distribution.Constant, State.Priority.A));
 
+        boolean verify = true;
+        if(verify) {
+            State.printVerification();
+            System.out.println("-----------------------------------");
+        }
+
         boolean first = true;
 
         for(var args : argsList) {
