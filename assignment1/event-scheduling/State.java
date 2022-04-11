@@ -1,15 +1,64 @@
 import java.util.*;
 import java.io.*;
+import java.util.function.Function;
 
 class State extends GlobalSimulation{
-	
-	// Here follows the state variables and other variables that might be needed
-	// e.g. for measurements
-	public int AsInQueue = 0;
-	public int BsInQueue = 0;
+    public enum Distribution {
+        Constant("Constant"),
+        Exponential("Exponential");
 
-	Random slump = new Random(); // This is just a random number generator
+        private String representation;
+
+        Distribution(String rep) {
+            representation = rep;
+        }
+
+        @Override
+        public String toString() {
+            return representation;
+        }
+    }
+    public enum Priority {
+        A("A"),
+        B("B");
+
+        private String representation;
+
+        Priority(String rep) {
+            representation = rep;
+        }
+
+        @Override
+        public String toString() {
+            return representation;
+        }
+    }
+
+    public static class Args {
+        public State.Distribution delayDistribution;
+        public State.Priority priority;
+
+        public Args(State.Distribution dist, State.Priority prio) {
+            delayDistribution = dist;
+            priority = prio;
+        }
+    }
+
+	private int asInQueue = 0;
+	private int bsInQueue = 0;
+    private Distribution delayDistribution;
+    private Priority priority;
+
+    public List<Integer> measurements = new ArrayList<Integer>();
+
+	private Random random = new Random();
+
 	
+    public State(Args args) {
+        delayDistribution = args.delayDistribution;
+        priority = args.priority;
+    }
+
 	
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
@@ -27,45 +76,80 @@ class State extends GlobalSimulation{
 			case DONE_B:
 				doneB();
 				break;
+			case MEASURE:
+				measure();
+				break;
 		}
 	}
 	
 	
-	// The following methods defines what should be done when an event takes place. This could
-	// have been placed in the case in treatEvent, but often it is simpler to write a method if 
-	// things are getting more complicated than this.
+    private double constant(double lambda) {
+        return lambda;
+    }
 	
-    private void serveNext() {
-		if (BsInQueue > 0) {
-			insertEvent(DONE_B, time + 0.004);
+    private double expRandom(double lambda) {
+        double p = random.nextDouble();
+        return -Math.log(1-p)/lambda;
+    }
+	
+    private void servePrioritized(
+            int numPrimaryQueue,
+            int primaryEvent,
+            double primaryDelay,
+            int numSecondaryQueue,
+            int secondaryEvent,
+            double secondaryDelay) {
+        if (numPrimaryQueue > 0) {
+			insertEvent(primaryEvent, time + primaryDelay);
         }
-        else if (AsInQueue > 0) {
-			insertEvent(DONE_A, time + 0.002);
+        else if (numSecondaryQueue > 0) {
+			insertEvent(secondaryEvent, time + secondaryDelay);
+        }
+    }
+    private void serveNext() {
+        if(priority == priority.A) {
+            servePrioritized(asInQueue, DONE_A, 0.002, bsInQueue, DONE_B, 0.004);
+        }
+        else {
+            servePrioritized(bsInQueue, DONE_B, 0.004, asInQueue, DONE_A, 0.002);
         }
     }
 
 	private void arriveA(){
-		AsInQueue++;
-		if (AsInQueue == 1 && BsInQueue == 0) {
+		asInQueue++;
+		if (asInQueue == 1 && bsInQueue == 0) {
             serveNext();
         }
-		insertEvent(ARRIVE_A, time + 1.0/150);
+		insertEvent(ARRIVE_A, time + expRandom(150));
 	}
 	
 	private void doneA(){
-		AsInQueue--;
+		asInQueue--;
+        var delayConstant = true;
+
+        Function<Double, Double> dist =
+            delayDistribution == Distribution.Constant
+                ? this::constant
+                : this::expRandom;
+
+        insertEvent(ARRIVE_B, time + dist.apply(1.0));
         serveNext();
 	}
 	
 	private void arriveB(){
-		BsInQueue++;
-		if (AsInQueue == 0 && BsInQueue == 1) {
+		bsInQueue++;
+		if (asInQueue == 0 && bsInQueue == 1) {
             serveNext();
         }
 	}
 
 	private void doneB(){
-		BsInQueue--;
+		bsInQueue--;
         serveNext();
+	}
+
+	private void measure(){
+        measurements.add(asInQueue + bsInQueue);
+        insertEvent(MEASURE, time + 0.1);
 	}
 }
