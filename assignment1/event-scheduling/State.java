@@ -1,11 +1,12 @@
 import java.util.*;
 import java.io.*;
+import java.math.*;
 
 class State extends GlobalSimulation{
 	
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
-	public int numberInQueue = 0, accumulated = 0, noMeasurements = 0;
+	public int numberOfArrivals=0, numberInQueue1 = 0, numberInQueue2 = 0, numberOfRejected = 0, numberMeasurements = 0, accumulatedQueue1 = 0, accumulatedQueue2;
 
 	Random slump = new Random(); // This is just a random number generator
 	
@@ -14,11 +15,14 @@ class State extends GlobalSimulation{
 	// from the event list in the main loop. 
 	public void treatEvent(Event x){
 		switch (x.eventType){
-			case ARRIVAL:
+			case ARRIVAL1:
 				arrival();
 				break;
-			case READY:
-				ready();
+			case DEPARTURE1:
+				departure1();
+				break;
+			case DEPARTURE2:
+				departure2();
 				break;
 			case MEASURE:
 				measure();
@@ -32,21 +36,38 @@ class State extends GlobalSimulation{
 	// things are getting more complicated than this.
 	
 	private void arrival(){
-		if (numberInQueue == 0)
-			insertEvent(READY, time + 2*slump.nextDouble());
-		numberInQueue++;
-		insertEvent(ARRIVAL, time + 2.5*slump.nextDouble());
+		numberOfArrivals++;
+		if (numberInQueue1 < 10)
+			numberInQueue1++;
+		else
+			numberOfRejected++;
+		if (numberInQueue1==1)
+			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
+		insertEvent(ARRIVAL1, time + 2); //HERE Input for Arrival 
 	}
 	
-	private void ready(){
-		numberInQueue--;
-		if (numberInQueue > 0)
-			insertEvent(READY, time + 2*slump.nextDouble());
+	private void departure1(){
+		numberInQueue1--;
+		numberInQueue2++;
+		if (numberInQueue2==1)
+			insertEvent(DEPARTURE2, time + 2);
+		if (numberInQueue1>0)
+			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
+	}
+	
+	private void departure2(){
+		numberInQueue2--;
+		if (numberInQueue2>0)
+			insertEvent(DEPARTURE2, time + 2);
 	}
 	
 	private void measure(){
-		accumulated = accumulated + numberInQueue;
-		noMeasurements++;
-		insertEvent(MEASURE, time + slump.nextDouble()*10);
+		accumulatedQueue1 = accumulatedQueue1 + numberInQueue1;
+		accumulatedQueue2 = accumulatedQueue2 + numberInQueue2;
+		numberMeasurements++;
+		insertEvent(MEASURE, time + expRnd(5)); 
+	}
+	public double expRnd(double expectedValue) {
+		return (Math.log(slump.nextDouble())/(-1.0/expectedValue));
 	}
 }
