@@ -10,6 +10,11 @@ class State extends GlobalSimulation{
 
 	Random slump = new Random(); // This is just a random number generator
 	
+	Deque <Double> customerQueue = new LinkedList<>();
+
+	public ArrayList<Double[]> currentNumberOfCustomersList = new ArrayList<Double[]>();
+	
+	public ArrayList<Double> timeInSystemList = new ArrayList<Double>();
 	
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
@@ -36,36 +41,38 @@ class State extends GlobalSimulation{
 	// things are getting more complicated than this.
 	
 	private void arrival(){
+		customerQueue.addLast(time);
 		numberOfArrivals++;
-		if (numberInQueue1 < 10)
-			numberInQueue1++;
-		else
-			numberOfRejected++;
+		numberInQueue1++;
 		if (numberInQueue1==1)
-			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
-		insertEvent(ARRIVAL1, time + 2); //HERE Input for Arrival 
+			insertEvent(DEPARTURE1, time + expRnd(1)); 
+		insertEvent(ARRIVAL1, time + expRnd(1.1)); //HERE Input for Arrival 
 	}
 	
 	private void departure1(){
 		numberInQueue1--;
 		numberInQueue2++;
 		if (numberInQueue2==1)
-			insertEvent(DEPARTURE2, time + 2);
+			insertEvent(DEPARTURE2, time + expRnd(1));
 		if (numberInQueue1>0)
-			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
+			insertEvent(DEPARTURE1, time + expRnd(1)); 
 	}
 	
 	private void departure2(){
+		double entryTime = customerQueue.removeFirst();
+		timeInSystemList.add(time - entryTime);
 		numberInQueue2--;
 		if (numberInQueue2>0)
-			insertEvent(DEPARTURE2, time + 2);
+			insertEvent(DEPARTURE2, time + expRnd(1));
 	}
 	
 	private void measure(){
+		Double[] current_measure = {time, (double) numberInQueue1, (double) numberInQueue2};
+		currentNumberOfCustomersList.add(current_measure);
 		accumulatedQueue1 = accumulatedQueue1 + numberInQueue1;
 		accumulatedQueue2 = accumulatedQueue2 + numberInQueue2;
 		numberMeasurements++;
-		insertEvent(MEASURE, time + expRnd(5)); 
+		insertEvent(MEASURE, time + expRnd(1)); 
 	}
 	public double expRnd(double expectedValue) {
 		return (Math.log(slump.nextDouble())/(-1.0/expectedValue));
