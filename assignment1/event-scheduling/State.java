@@ -130,8 +130,8 @@ class State extends GlobalSimulation{
 
         Function<Double, Double> dist =
             delayDistribution == Distribution.Constant
-                ?  lambda -> 1.0/lambda
-                : this::expRandom;
+                ? mean -> mean
+                : mean -> expRandom(1.0/mean);
 
         insertEvent(ARRIVE_B, time + dist.apply(1.0));
         serveNext();
