@@ -1,27 +1,37 @@
 import java.util.*;
 import java.io.*;
 
-//Denna klass ärver Proc, det gör att man kan använda time och signalnamn utan punktnotation
+//Denna klass ï¿½rver Proc, det gï¿½r att man kan anvï¿½nda time och signalnamn utan punktnotation
 //It inherits Proc so that we can use time and the signal names without dot notation 
 
 class Gen extends Proc{
-
-	//Slumptalsgeneratorn startas:
-	//The random number generator is started:
-	Random slump = new Random();
-
-	//Generatorn har två parametrar:
-	//There are two parameters:
 	public Proc sendTo;    //Anger till vilken process de genererade kunderna ska skickas //Where to send customers
-	public double lambda;  //Hur många per sekund som ska generas //How many to generate per second
+	public double probability;
+	public double mean; 
 
-	//Här nedan anger man vad som ska göras när en signal kommer //What to do when a signal arrives
+	Random random;
+	public Gen(double probability){
+		this.probability = probability;
+		random = new Random();
+	}
+
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
-			case READY:{
-				SignalList.SendSignal(ARRIVAL, sendTo, time);
-				SignalList.SendSignal(READY, this, time + (2.0/lambda)*slump.nextDouble());}
+			case GENERATE:{
+				if(generate_special()){
+					SignalList.SendSignal(SPEC_ARRIVAL, sendTo, time);
+				}
+				else{
+					SignalList.SendSignal(NORM_ARRIVAL, sendTo, time);
+				}
+
+				SignalList.SendSignal(GENERATE, this, time + expo(1/mean));
+			}
 				break;
 		}
 	}
+	private boolean generate_special(){
+        double r = random.nextDouble();
+        return r < probability;
+    }
 }
