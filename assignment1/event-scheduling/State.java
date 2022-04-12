@@ -88,10 +88,6 @@ class State extends GlobalSimulation{
 	}
 	
 	
-    private double constant(double lambda) {
-        return lambda;
-    }
-	
     private double expRandom(double lambda) {
         double p = random.nextDouble();
         return -Math.log(1-p)/lambda;
@@ -134,7 +130,7 @@ class State extends GlobalSimulation{
 
         Function<Double, Double> dist =
             delayDistribution == Distribution.Constant
-                ? this::constant
+                ?  lambda -> 1.0/lambda
                 : this::expRandom;
 
         insertEvent(ARRIVE_B, time + dist.apply(1.0));
