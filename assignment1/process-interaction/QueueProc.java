@@ -17,6 +17,9 @@ class QueueProc extends Proc {
 	public Queue<Customer> normalQueue = new LinkedList<>();
 	public Queue<Customer> specialQueue = new LinkedList<>();
 
+	public ArrayList<Double> invNormalResultTimes = new ArrayList<>();
+	public ArrayList<Double> invSpecialResultTimes = new ArrayList<>();
+
 	public int specialInQueue = 0;
 	public int normInQueue = 0;
 	public int specialFinished = 0;
@@ -57,7 +60,9 @@ class QueueProc extends Proc {
 				normalFinished++;
 
 				var customer = normalQueue.poll();
-				normalTotaltime += customer.serviceStart - customer.arrivalTime;
+				var resultTime = customer.serviceStart - customer.arrivalTime;
+				normalTotaltime += resultTime;
+				invNormalResultTimes.add(resultTime);
 
 				serveNext();
 			}
@@ -68,7 +73,9 @@ class QueueProc extends Proc {
 				specialFinished++;
 
 				var customer = specialQueue.poll();
-				specialTotaltime += customer.serviceStart - customer.arrivalTime;
+				var resultTime = customer.serviceStart - customer.arrivalTime;
+				specialTotaltime += resultTime;
+				invSpecialResultTimes.add(resultTime);
 
 				serveNext();
 			}

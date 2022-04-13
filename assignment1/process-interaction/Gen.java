@@ -8,6 +8,7 @@ class Gen extends Proc{
 	public Proc sendTo;    //Anger till vilken process de genererade kunderna ska skickas //Where to send customers
 	public double probability;
 	public double mean; 
+	public int generatedPeople = 0;
 
 	Random random;
 	public Gen(double probability){
@@ -18,6 +19,7 @@ class Gen extends Proc{
 	public void TreatSignal(Signal x){
 		switch (x.signalType){
 			case GENERATE:{
+				generatedPeople++;
 				if(generate_special()){
 					SignalList.SendSignal(SPEC_ARRIVAL, sendTo, time);
 				}
