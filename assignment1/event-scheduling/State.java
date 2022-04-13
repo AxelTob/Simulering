@@ -9,7 +9,19 @@ class State extends GlobalSimulation{
 	public int numberOfArrivals=0, numberInQueue1 = 0, numberInQueue2 = 0, numberOfRejected = 0, numberMeasurements = 0, accumulatedQueue1 = 0, accumulatedQueue2;
 
 	Random slump = new Random(); // This is just a random number generator
+
+	public double arrival_time;
+
+	public double getArrival_time() {
+		return this.arrival_time;
+	}
+
+	public void setArrival_time(double arrival_time) {
+		this.arrival_time = arrival_time;
+	}
+
 	
+	public ArrayList<Double[]> currentNumberOfCustomersList = new ArrayList<Double[]>();
 	
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
@@ -43,7 +55,7 @@ class State extends GlobalSimulation{
 			numberOfRejected++;
 		if (numberInQueue1==1)
 			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
-		insertEvent(ARRIVAL1, time + 2); //HERE Input for Arrival 
+		insertEvent(ARRIVAL1, time + arrival_time); //HERE Input for Arrival 
 	}
 	
 	private void departure1(){
@@ -62,6 +74,8 @@ class State extends GlobalSimulation{
 	}
 	
 	private void measure(){
+		Double[] current_measure = {time, (double) numberInQueue1, (double) numberInQueue2};
+		currentNumberOfCustomersList.add(current_measure);
 		accumulatedQueue1 = accumulatedQueue1 + numberInQueue1;
 		accumulatedQueue2 = accumulatedQueue2 + numberInQueue2;
 		numberMeasurements++;
