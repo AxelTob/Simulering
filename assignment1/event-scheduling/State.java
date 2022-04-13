@@ -8,9 +8,20 @@ class State extends GlobalSimulation{
 	// e.g. for measurements
 	public int numberOfArrivals=0, numberInQueue1 = 0, numberInQueue2 = 0, numberOfRejected = 0, numberMeasurements = 0, accumulatedQueue1 = 0, accumulatedQueue2;
 
-	Random slump = new Random(); // This is just a random number generator
+	Random slump = new Random(123); // This is just a random number generator
 	
 	Deque <Double> customerQueue = new LinkedList<>();
+
+	public double arrival_time;
+
+	public double getArrival_time() {
+		return this.arrival_time;
+	}
+
+	public void setArrival_time(double arrival_time) {
+		this.arrival_time = arrival_time;
+	}
+
 
 	public ArrayList<Double[]> currentNumberOfCustomersList = new ArrayList<Double[]>();
 	
@@ -46,7 +57,7 @@ class State extends GlobalSimulation{
 		numberInQueue1++;
 		if (numberInQueue1==1)
 			insertEvent(DEPARTURE1, time + expRnd(1)); 
-		insertEvent(ARRIVAL1, time + expRnd(1.1)); //HERE Input for Arrival 
+		insertEvent(ARRIVAL1, time + expRnd(arrival_time)); //HERE Input for Arrival 
 	}
 	
 	private void departure1(){
@@ -72,7 +83,7 @@ class State extends GlobalSimulation{
 		accumulatedQueue1 = accumulatedQueue1 + numberInQueue1;
 		accumulatedQueue2 = accumulatedQueue2 + numberInQueue2;
 		numberMeasurements++;
-		insertEvent(MEASURE, time + expRnd(1)); 
+		insertEvent(MEASURE, time + expRnd(5)); 
 	}
 	public double expRnd(double expectedValue) {
 		return (Math.log(slump.nextDouble())/(-1.0/expectedValue));
