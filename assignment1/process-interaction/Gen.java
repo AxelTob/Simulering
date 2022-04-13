@@ -11,9 +11,9 @@ class Gen extends Proc{
 	public int generatedPeople = 0;
 
 	Random random;
-	public Gen(double probability){
+	public Gen(int seed, double probability) {
 		this.probability = probability;
-		random = new Random();
+		random = new Random(seed);
 	}
 
 	public void TreatSignal(Signal x){
@@ -27,11 +27,12 @@ class Gen extends Proc{
 					SignalList.SendSignal(NORM_ARRIVAL, sendTo, time);
 				}
 
-				SignalList.SendSignal(GENERATE, this, time + expo(1/mean));
+				SignalList.SendSignal(GENERATE, this, time + expo(1/mean, random));
 			}
 				break;
 		}
 	}
+
 	private boolean generate_special(){
         double r = random.nextDouble();
         return r < probability;

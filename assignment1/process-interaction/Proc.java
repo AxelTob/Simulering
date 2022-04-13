@@ -8,8 +8,7 @@ public abstract class Proc extends Global{
 	
 	public abstract void TreatSignal(Signal x);
 
-	public double expo(double lambda) {
-		Random random = new Random();
+	public double expo(double lambda, Random random) {
 		return  Math.log(1-random.nextDouble())/(-lambda);
 	}
 }

@@ -62,10 +62,10 @@ public class MainSimulation extends Global{
     	new SignalList();
 		time = 0.0;
 
-		QueueProc Q1 = new QueueProc();
+		QueueProc Q1 = new QueueProc(0);
     	Q1.sendTo = null;
 
-    	Gen Generator = new Gen(probability);
+    	Gen Generator = new Gen(1, probability);
     	Generator.mean = 5;
     	Generator.sendTo = Q1;
 

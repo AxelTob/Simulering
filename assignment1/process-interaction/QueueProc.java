@@ -14,6 +14,12 @@ class QueueProc extends Proc {
 		double serviceStart;
 	}
 
+    QueueProc(int seed) {
+        random = new Random(seed);
+    }
+
+    Random random;
+
 	public Queue<Customer> normalQueue = new LinkedList<>();
 	public Queue<Customer> specialQueue = new LinkedList<>();
 
@@ -96,10 +102,10 @@ class QueueProc extends Proc {
 	private void serveNext() {
 		if (specialInQueue > 0) {
 			specialQueue.peek().serviceStart = time;
-			SignalList.SendSignal(SPEC_DONE, this, time + expo(1.0 / meanService));
+			SignalList.SendSignal(SPEC_DONE, this, time + expo(1.0 / meanService, random));
 		} else if (normInQueue > 0) {
 			normalQueue.peek().serviceStart = time;
-			SignalList.SendSignal(NORM_DONE, this, time + expo(1.0 / meanService));
+			SignalList.SendSignal(NORM_DONE, this, time + expo(1.0 / meanService, random));
 		}
 	}
 }
