@@ -11,9 +11,10 @@ class Gen extends Proc{
 	public int generatedPeople = 0;
 
 	Random random;
-	public Gen(int seed, double probability) {
+	public Gen(int seed, double meanTime, double probability) {
 		this.probability = probability;
 		random = new Random(seed);
+        this.mean = meanTime;
 	}
 
 	public void TreatSignal(Signal x){

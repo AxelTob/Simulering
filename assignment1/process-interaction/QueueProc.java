@@ -7,15 +7,16 @@ class QueueProc extends Proc {
 	public int accumulated, noMeasurements;
 	public Proc sendTo;
 
-	public double meanService = 4; // 4 minutes
+	public double meanService;
 
 	class Customer {
 		double arrivalTime;
 		double serviceStart;
 	}
 
-    QueueProc(int seed) {
+    QueueProc(int seed, double meanService) {
         random = new Random(seed);
+        this.meanService = meanService;
     }
 
     Random random;
