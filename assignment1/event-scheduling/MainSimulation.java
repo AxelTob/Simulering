@@ -5,7 +5,9 @@ import java.io.*;
 public class MainSimulation extends GlobalSimulation{
  
     public static void main(String[] args) throws IOException {
-		double[] arrivalArray = {1.1, 1.5, 2.0};
+		double[] arrivalArray = {1, 2, 5};
+		FileWriter writer = new FileWriter("Results.csv"); 
+		writer.write("Time between arrivals,Arrivals,Rejected,Accumulated Queue 1, Accumulated Queue 2,Measurements" + System.lineSeparator());
 		for (double dd:arrivalArray){
 			time = 0;
 			System.out.println("Time between arrivals: " + dd);
@@ -28,13 +30,20 @@ public class MainSimulation extends GlobalSimulation{
 				writer2.write(o[0] +","+ o[1] + "," + o[2] +  System.lineSeparator());
 			}
 			writer2.close();
-			// Printing the result of the simulation, in this case a mean value
+			// Saving the results of the simulation
+			writer.write(dd + "," + actState.numberOfArrivals + "," + actState.numberOfRejected + "," + actState.accumulatedQueue1 + "," + actState.accumulatedQueue2 + "," + actState.numberMeasurements + System.lineSeparator());
+			// Printing the results of the simulation
 			System.out.println("Arrivals: " + actState.numberOfArrivals);
+			System.out.println("Rejected: " + actState.numberOfRejected);
 			System.out.println("Accumulated Queue 1: " + actState.accumulatedQueue1);
 			System.out.println("Accumulated Queue 2: " + actState.accumulatedQueue2);
-			System.out.println("Rejected: " + actState.numberOfRejected);
 			System.out.println("Measurements: " + actState.numberMeasurements);
+			System.out.println("Avrg Queue 1: " + actState.accumulatedQueue1*1.0/actState.numberMeasurements);
+			System.out.println("Avrg Queue 2: " + actState.accumulatedQueue2*1.0/actState.numberMeasurements);
+			System.out.println("Probability rejected: " + actState.numberOfRejected*1.0/actState.numberOfArrivals);
+			
 			System.out.println("\n \n");
 		}
+		writer.close();
     }
 }
