@@ -8,7 +8,7 @@ class State extends GlobalSimulation{
 	// e.g. for measurements
 	public int numberOfArrivals=0, numberInQueue1 = 0, numberInQueue2 = 0, numberOfRejected = 0, numberMeasurements = 0, accumulatedQueue1 = 0, accumulatedQueue2;
 
-	Random slump = new Random(); // This is just a random number generator
+	Random slump = new Random(123); // This is just a random number generator
 
 	public double arrival_time;
 
