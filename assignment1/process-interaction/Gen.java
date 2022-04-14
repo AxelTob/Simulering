@@ -1,5 +1,4 @@
 import java.util.*;
-import java.io.*;
 
 //Denna klass �rver Proc, det g�r att man kan anv�nda time och signalnamn utan punktnotation
 //It inherits Proc so that we can use time and the signal names without dot notation 

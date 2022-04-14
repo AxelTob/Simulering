@@ -7,13 +7,38 @@ public class MainSimulation extends Global {
     }
 
     public static void main(String[] args) throws IOException {
-        for (Double mean : Arrays.asList(0.11, 0.15, 2.0)) {
-            var result = runSimulation(0.2, mean);
-            System.out.printf("Mean queue length: %f\n", result.meanLength);
+        var meanArrivals = Arrays.asList(0.11, 0.15, 2.0);
+        var policies = Arrays.asList(
+                new Dispatcher.Policy() { // random
+                    private Random random = new Random(1337);
+
+                    public QueueProc pickNext(List<QueueProc> queues) {
+                        return queues.get(random.nextInt(queues.size()));
+                    }
+                },
+                new Dispatcher.Policy() { // round-robbin
+                    private int current = 0;
+
+                    public QueueProc pickNext(List<QueueProc> queues) {
+                        current %= queues.size();
+                        var next = queues.get(current);
+                        ++current;
+                        return next;
+                    }
+                });
+
+        for (Double mean : meanArrivals) {
+            for (var policy : policies) {
+                var result = runSimulation(0.2, mean, policy);
+                System.out.printf("Mean queue length: %f\n", result.meanLength);
+            }
         }
     }
 
-    private static SimulationResult runSimulation(double probability, double meanArrival) {
+    private static SimulationResult runSimulation(
+            double probability,
+            double meanArrival,
+            Dispatcher.Policy policy) {
         time = 0.0;
         new SignalList(); // Reset global state lmao
 
@@ -24,7 +49,7 @@ public class MainSimulation extends Global {
         queues.add(new QueueProc(3, 0.5));
         queues.add(new QueueProc(4, 0.5));
 
-        var dispatcher = new Dispatcher(5, queues);
+        var dispatcher = new Dispatcher(5, queues, policy);
 
         var generator = new Gen(6, meanArrival, probability);
         generator.sendTo = dispatcher;
