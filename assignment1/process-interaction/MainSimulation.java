@@ -6,31 +6,64 @@ public class MainSimulation extends Global {
         double meanLength = 0.0;
     }
 
+    static class RandomPolicy implements Dispatcher.Policy {
+        private Random random = new Random(1337);
+
+        public QueueProc pickNext(List<QueueProc> queues) {
+            return queues.get(random.nextInt(queues.size()));
+        }
+
+        @Override
+        public String toString() {
+            return "Random";
+        }
+    }
+
+    static class RoundRobbinPolicy implements Dispatcher.Policy {
+        private int current = 0;
+
+        public QueueProc pickNext(List<QueueProc> queues) {
+            current %= queues.size();
+            var next = queues.get(current);
+            ++current;
+            return next;
+        }
+
+        @Override
+        public String toString() {
+            return "Round-robbin";
+        }
+    }
+
+    static class ShortestPolicy implements Dispatcher.Policy {
+        public QueueProc pickNext(List<QueueProc> queues) {
+            return queues.stream()
+                    .min(Comparator.comparing(q -> q.normInQueue + q.specialInQueue))
+                    .get();
+        }
+
+        @Override
+        public String toString() {
+            return "Shortest";
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         var meanArrivals = Arrays.asList(0.11, 0.15, 2.0);
         var policies = Arrays.asList(
-                new Dispatcher.Policy() { // random
-                    private Random random = new Random(1337);
-
-                    public QueueProc pickNext(List<QueueProc> queues) {
-                        return queues.get(random.nextInt(queues.size()));
-                    }
-                },
-                new Dispatcher.Policy() { // round-robbin
-                    private int current = 0;
-
-                    public QueueProc pickNext(List<QueueProc> queues) {
-                        current %= queues.size();
-                        var next = queues.get(current);
-                        ++current;
-                        return next;
-                    }
-                });
+                new RandomPolicy(),
+                new RoundRobbinPolicy(),
+                new ShortestPolicy());
 
         for (Double mean : meanArrivals) {
             for (var policy : policies) {
                 var result = runSimulation(0.2, mean, policy);
-                System.out.printf("Mean queue length: %f\n", result.meanLength);
+
+                System.out.printf(
+                        "Policy: %s\t, Mean arrival: %f\t, Mean queue length: %f\n",
+                        policy.toString(),
+                        mean,
+                        result.meanLength);
             }
         }
     }

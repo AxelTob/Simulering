@@ -37,7 +37,6 @@ class Dispatcher extends Proc {
 
 	private void sendNext(int event) {
         var destination = policy.pickNext(queues);
-		queues.get(random.nextInt(queues.size()));
         SignalList.SendSignal(
                 event,
                 destination,
