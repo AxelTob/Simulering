@@ -1,14 +1,21 @@
 import java.util.*;
 import java.io.*;
 
-
-public class MainSimulation extends Global{
-    public static void main(String[] args) throws IOException {
-        runSimulation(0.2);
+public class MainSimulation extends Global {
+    static class SimulationResult {
+        double meanLength = 0.0;
     }
 
-	private static void runSimulation(double probability) {
-    	new SignalList(); // Reset global state lmao
+    public static void main(String[] args) throws IOException {
+        for (Double mean : Arrays.asList(0.11, 0.15, 2.0)) {
+            var result = runSimulation(0.2, mean);
+            System.out.printf("Mean queue length: %f\n", result.meanLength);
+        }
+    }
+
+    private static SimulationResult runSimulation(double probability, double meanArrival) {
+        time = 0.0;
+        new SignalList(); // Reset global state lmao
 
         var queues = new ArrayList<QueueProc>();
         queues.add(new QueueProc(0, 0.5));
@@ -19,15 +26,26 @@ public class MainSimulation extends Global{
 
         var dispatcher = new Dispatcher(5, queues);
 
-        final double meanArrival = 0.15;
-    	var generator = new Gen(6, meanArrival, probability);
-    	generator.sendTo = dispatcher;
+        var generator = new Gen(6, meanArrival, probability);
+        generator.sendTo = dispatcher;
 
-    	SignalList.SendSignal(GENERATE, generator, time);
+        SignalList.SendSignal(GENERATE, generator, time);
+        for (var queue : queues) {
+            SignalList.SendSignal(MEASURE, queue, time);
+        }
 
-    	while (generator.generatedPeople < 10000) {
-    		var signal = SignalList.FetchSignal();
-    		signal.destination.TreatSignal(signal);
-    	}
-	}
+        while (time < 100000) {
+            var signal = SignalList.FetchSignal();
+            time = signal.arrivalTime;
+            signal.destination.TreatSignal(signal);
+        }
+
+        var result = new SimulationResult();
+
+        for (var queue : queues) {
+            result.meanLength += (double) (queue.accumulatedLength) / queue.noMeasurements / queues.size();
+        }
+
+        return result;
+    }
 }

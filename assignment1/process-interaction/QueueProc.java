@@ -1,10 +1,9 @@
 import java.util.*;
-import java.io.*;
 
 // This class defines a simple queuing system with one server. It inherits Proc so that we can use time and the
 // signal names without dot notation
 class QueueProc extends Proc {
-	public int accumulated, noMeasurements;
+	public int noMeasurements = 0;
 	public Proc sendTo;
 
 	public double meanService;
@@ -24,11 +23,9 @@ class QueueProc extends Proc {
 	public Queue<Customer> normalQueue = new LinkedList<>();
 	public Queue<Customer> specialQueue = new LinkedList<>();
 
-	public ArrayList<Double> invNormalResultTimes = new ArrayList<>();
-	public ArrayList<Double> invSpecialResultTimes = new ArrayList<>();
-
 	public int specialInQueue = 0;
 	public int normInQueue = 0;
+	public int accumulatedLength = 0;
 	public int specialFinished = 0;
 	public int normalFinished = 0;
 	public int specialTotaltime = 0;
@@ -69,7 +66,6 @@ class QueueProc extends Proc {
 				var customer = normalQueue.poll();
 				var resultTime = customer.serviceStart - customer.arrivalTime;
 				normalTotaltime += resultTime;
-				invNormalResultTimes.add(resultTime);
 
 				serveNext();
 			}
@@ -82,7 +78,6 @@ class QueueProc extends Proc {
 				var customer = specialQueue.poll();
 				var resultTime = customer.serviceStart - customer.arrivalTime;
 				specialTotaltime += resultTime;
-				invSpecialResultTimes.add(resultTime);
 
 				serveNext();
 			}
@@ -91,8 +86,7 @@ class QueueProc extends Proc {
 			case MEASURE: {
 				Random rand = new Random();
 				noMeasurements++;
-				specialAccumulated += specialInQueue;
-				normAccumulated += normInQueue;
+				accumulatedLength += normInQueue + specialInQueue;
 
 				SignalList.SendSignal(MEASURE, this, time + 2 * rand.nextDouble());
 			}
