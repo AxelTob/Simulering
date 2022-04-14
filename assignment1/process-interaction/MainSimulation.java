@@ -55,12 +55,13 @@ public class MainSimulation extends Global {
                 new RoundRobbinPolicy(),
                 new ShortestPolicy());
 
+        System.out.println("Policy & Mean arrival time & Mean jobs in queue \\\\ \\hline");
+
         for (Double mean : meanArrivals) {
             for (var policy : policies) {
                 var result = runSimulation(0.2, mean, policy);
-
                 System.out.printf(
-                        "Policy: %s\t, Mean arrival: %f\t, Mean queue length: %f\n",
+                        "%s & %f & %f  \\\\ \\hline \n",
                         policy.toString(),
                         mean,
                         result.meanLength);
@@ -101,7 +102,7 @@ public class MainSimulation extends Global {
         var result = new SimulationResult();
 
         for (var queue : queues) {
-            result.meanLength += (double) (queue.accumulatedLength) / queue.noMeasurements / queues.size();
+            result.meanLength += (double) (queue.accumulatedLength) / queue.noMeasurements;
         }
 
         return result;
