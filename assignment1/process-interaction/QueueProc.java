@@ -9,16 +9,22 @@ class QueueProc extends Proc {
 
 	public double meanService = 4; // 4 minutes
 
+	private Random random;
+
 	class Customer {
 		double arrivalTime;
 		double serviceStart;
 	}
 
+	public QueueProc(long seed) {
+		random = new Random(seed);
+	}
+
 	public Queue<Customer> normalQueue = new LinkedList<>();
 	public Queue<Customer> specialQueue = new LinkedList<>();
 
-	public ArrayList<Double> invNormalResultTimes = new ArrayList<>();
-	public ArrayList<Double> invSpecialResultTimes = new ArrayList<>();
+	public ArrayList<Double> normalResultTimes = new ArrayList<>();
+	public ArrayList<Double> specialResultTimes = new ArrayList<>();
 
 	public int specialInQueue = 0;
 	public int normInQueue = 0;
@@ -62,7 +68,7 @@ class QueueProc extends Proc {
 				var customer = normalQueue.poll();
 				var resultTime = customer.serviceStart - customer.arrivalTime;
 				normalTotaltime += resultTime;
-				invNormalResultTimes.add(resultTime);
+				normalResultTimes.add(resultTime);
 
 				serveNext();
 			}
@@ -75,19 +81,18 @@ class QueueProc extends Proc {
 				var customer = specialQueue.poll();
 				var resultTime = customer.serviceStart - customer.arrivalTime;
 				specialTotaltime += resultTime;
-				invSpecialResultTimes.add(resultTime);
+				specialResultTimes.add(resultTime);
 
 				serveNext();
 			}
 				break;
 
 			case MEASURE: {
-				Random rand = new Random();
 				noMeasurements++;
 				specialAccumulated += specialInQueue;
 				normAccumulated += normInQueue;
 
-				SignalList.SendSignal(MEASURE, this, time + 2 * rand.nextDouble());
+				SignalList.SendSignal(MEASURE, this, time + 2 * random.nextDouble());
 			}
 				break;
 		}
@@ -96,10 +101,10 @@ class QueueProc extends Proc {
 	private void serveNext() {
 		if (specialInQueue > 0) {
 			specialQueue.peek().serviceStart = time;
-			SignalList.SendSignal(SPEC_DONE, this, time + expo(1.0 / meanService));
+			SignalList.SendSignal(SPEC_DONE, this, time + expo(random, 1.0 / meanService));
 		} else if (normInQueue > 0) {
 			normalQueue.peek().serviceStart = time;
-			SignalList.SendSignal(NORM_DONE, this, time + expo(1.0 / meanService));
+			SignalList.SendSignal(NORM_DONE, this, time + expo(random, 1.0 / meanService));
 		}
 	}
 }

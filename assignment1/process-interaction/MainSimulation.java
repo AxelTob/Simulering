@@ -48,12 +48,13 @@ public class MainSimulation extends Global{
 			}
 			specialTimes.close();
 
-			System.out.printf("%fst\t%fst\t%fmin\t%fmin\t%f\n",
-					result.meanNumNormal,
-					result.meanNumSpecial,
+			System.out.print(String.format(
+					Locale.US,
+					"%.2f & %.2f & %.2f & %.2f \\\\ \\hline\n",
+					i,
 					result.meanTimeNormal,
 					result.meanTimeSpecial,
-					result.meanNumNormal + result.meanNumSpecial);		
+					result.meanNumNormal + result.meanNumSpecial));		
 		}
 		writerResult.close();
     }
@@ -62,17 +63,17 @@ public class MainSimulation extends Global{
     	new SignalList();
 		time = 0.0;
 
-		QueueProc Q1 = new QueueProc();
+		QueueProc Q1 = new QueueProc(0);
     	Q1.sendTo = null;
 
-    	Gen Generator = new Gen(probability);
+    	Gen Generator = new Gen(1, probability);
     	Generator.mean = 5;
     	Generator.sendTo = Q1;
 
     	SignalList.SendSignal(GENERATE, Generator, time);
     	SignalList.SendSignal(MEASURE, Q1, time);
 
-    	while (Generator.generatedPeople < 1000) {
+    	while (Generator.generatedPeople < 100000) {
     		var actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);
@@ -85,8 +86,8 @@ public class MainSimulation extends Global{
 
 		result.meanTimeSpecial = (double)(Q1.specialTotaltime)/Q1.specialFinished;
 		result.meanTimeNormal = (double)(Q1.normalTotaltime)/Q1.normalFinished;
-		result.normalTimes = Q1.invNormalResultTimes;
-		result.specialTimes = Q1.invSpecialResultTimes;
+		result.normalTimes = Q1.normalResultTimes;
+		result.specialTimes = Q1.specialResultTimes;
 
 		return result;
 	}
