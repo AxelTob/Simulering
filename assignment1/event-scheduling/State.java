@@ -18,6 +18,7 @@ class State extends GlobalSimulation{
             return representation;
         }
     }
+
     public enum Priority {
         A("A"),
         B("B");
@@ -37,31 +38,41 @@ class State extends GlobalSimulation{
     public static class Args {
         public State.Distribution delayDistribution;
         public State.Priority priority;
+        public long seed;
 
-        public Args(State.Distribution dist, State.Priority prio) {
+        public Args(long seed, State.Distribution dist, State.Priority prio) {
             delayDistribution = dist;
             priority = prio;
+            this.seed = seed;
         }
+    }
+
+    public static class Measurement {
+        public int asInQueue;
+        public int bsInQueue;
     }
 
 	private int asInQueue = 0;
 	private int bsInQueue = 0;
     private Distribution delayDistribution;
     private Priority priority;
+    private double arrivalFreq = 150;
 
-    public List<Integer> measurements = new ArrayList<Integer>();
+    public List<Measurement> measurements = new ArrayList<Measurement>();
 
-	private Random random = new Random();
+	private Random random;
 
 	
     public State() {
         delayDistribution = Distribution.Constant;
         priority = Priority.B;
+        random = new Random(0);
     }
 
     public State(Args args) {
         delayDistribution = args.delayDistribution;
         priority = args.priority;
+        random = new Random(args.seed);
     }
 
 	
@@ -121,7 +132,7 @@ class State extends GlobalSimulation{
 		if (asInQueue == 1 && bsInQueue == 0) {
             serveNext();
         }
-		insertEvent(ARRIVE_A, time + expRandom(150));
+		insertEvent(ARRIVE_A, time + expRandom(arrivalFreq));
 	}
 	
 	private void doneA(){
@@ -150,12 +161,15 @@ class State extends GlobalSimulation{
 	}
 
 	private void measure(){
-        measurements.add(asInQueue + bsInQueue);
+        var measurement = new Measurement();
+        measurement.asInQueue = asInQueue;
+        measurement.bsInQueue = bsInQueue;
+        measurements.add(measurement);
         insertEvent(MEASURE, time + 0.1);
 	}
 
 
-    public static void printVerification() {
+    public static void runVerification() {
         System.out.println("VERIFICATION OF EXPONENTIAL DISTRIBUTION");
         var state = new State();
 
