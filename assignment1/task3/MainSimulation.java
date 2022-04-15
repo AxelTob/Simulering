@@ -41,7 +41,7 @@ public class MainSimulation extends GlobalSimulation{
 				 }
 			writer.close();
 			FileWriter writer2 = new FileWriter("Customers_in_Queue_"+dd+".csv"); 
-			writer2.write("Time, Queue1, Queue2" + System.lineSeparator());
+			writer2.write("Time,Queue1,Queue2" + System.lineSeparator());
 			for(Double[] o: actState.currentNumberOfCustomersList) {
 					 writer2.write(o[0] +","+ o[1] + "," + o[2] +  System.lineSeparator());
 				 }
