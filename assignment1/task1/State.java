@@ -1,0 +1,87 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+class State extends GlobalSimulation{
+	
+	// Here follows the state variables and other variables that might be needed
+	// e.g. for measurements
+	public int numberOfArrivals=0, numberInQueue1 = 0, numberInQueue2 = 0, numberOfRejected = 0, numberMeasurements = 0, accumulatedQueue1 = 0, accumulatedQueue2;
+
+	Random slump = new Random(123); // This is just a random number generator
+
+	public double arrival_time;
+
+	public double getArrival_time() {
+		return this.arrival_time;
+	}
+
+	public void setArrival_time(double arrival_time) {
+		this.arrival_time = arrival_time;
+	}
+
+	
+	public ArrayList<Double[]> currentNumberOfCustomersList = new ArrayList<Double[]>();
+	
+	// The following method is called by the main program each time a new event has been fetched
+	// from the event list in the main loop. 
+	public void treatEvent(Event x){
+		switch (x.eventType){
+			case ARRIVAL1:
+				arrival();
+				break;
+			case DEPARTURE1:
+				departure1();
+				break;
+			case DEPARTURE2:
+				departure2();
+				break;
+			case MEASURE:
+				measure();
+				break;
+		}
+	}
+	
+	
+	// The following methods defines what should be done when an event takes place. This could
+	// have been placed in the case in treatEvent, but often it is simpler to write a method if 
+	// things are getting more complicated than this.
+	
+	private void arrival(){
+		numberOfArrivals++;
+		if (numberInQueue1 < 10)
+			numberInQueue1++;
+		else
+			numberOfRejected++;
+		if (numberInQueue1==1)
+			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
+		insertEvent(ARRIVAL1, time + arrival_time); //HERE Input for Arrival 
+	}
+	
+	private void departure1(){
+		numberInQueue1--;
+		numberInQueue2++;
+		if (numberInQueue2==1)
+			insertEvent(DEPARTURE2, time + 2);
+		if (numberInQueue1>0)
+			insertEvent(DEPARTURE1, time + expRnd(2.1)); 
+	}
+	
+	private void departure2(){
+		numberInQueue2--;
+		if (numberInQueue2>0)
+			insertEvent(DEPARTURE2, time + 2);
+	}
+	
+	private void measure(){
+		Double[] current_measure = {time, (double) numberInQueue1, (double) numberInQueue2};
+		currentNumberOfCustomersList.add(current_measure);
+		accumulatedQueue1 = accumulatedQueue1 + numberInQueue1;
+		accumulatedQueue2 = accumulatedQueue2 + numberInQueue2;
+		numberMeasurements++;
+		insertEvent(MEASURE, time + expRnd(5)); 
+	}
+	public double expRnd(double expectedValue) {
+		return (Math.log(slump.nextDouble())/(-1.0/expectedValue));
+	}
+}
