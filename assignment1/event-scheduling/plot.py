@@ -17,7 +17,7 @@ def plotData(dist, prio):
 
     plt.plot(asInQueue, label = "Type A")
     plt.plot(bsInQueue, label = "Type B")
-    plt.title(f"{dist} arrival distribution, {prio} prioritized")
+    plt.title(f"{dist} delay distribution, {prio} prioritized")
     plt.legend()
     plt.ylabel("Jobs in queue")
     plt.xlabel("Measurement")
