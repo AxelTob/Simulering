@@ -13,6 +13,8 @@ class Pharmacy extends Proc {
     double close = 17.0;
     boolean closed;
     double extraminutes;
+    private double min = 10;
+    private double max = 20;
 
 
     class Customer {
@@ -40,7 +42,7 @@ class Pharmacy extends Proc {
                     queue.add(customer);
 
                     if(queue.size() == 1){
-                        SignalList.SendSignal(DONE, this, time + GetRandomNumber(10, 20));
+                        SignalList.SendSignal(DONE, this, time + GetRandomNumber(min, max));
                     }
                     
 
@@ -56,7 +58,7 @@ class Pharmacy extends Proc {
 
                 finishedTimes.add(result);
                 if(queue.size() > 0){ // might have to change this. Same structure as lab5
-                    SignalList.SendSignal(DONE, this, time + GetRandomNumber(10, 20));
+                    SignalList.SendSignal(DONE, this, time + GetRandomNumber(min, max));
                 }else if (closed) {
                     extraminutes = time - (close - open)*60.0;
                 }

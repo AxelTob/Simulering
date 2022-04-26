@@ -31,11 +31,10 @@ public class MainSimulation extends Global{
 		Pharmacy Ph = new Pharmacy(0);
 
     	Gen Generator = new Gen(1);
-    	Generator.mean = 5;
     	Generator.sendTo = Ph;
 
     	SignalList.SendSignal(GENERATE, Generator, time);
-    	SignalList.SendSignal(MEASURE, Ph, time);
+    	//SignalList.SendSignal(MEASURE, Ph, time);
 
     	while (!Ph.closed || Ph.queue.size() > 0) {
     		var actSignal = SignalList.FetchSignal();
