@@ -5,19 +5,28 @@ class State extends GlobalSimulation{
 
     int customers = 0;
 
-    double arrivalRate = 8.0;
-    int servers = 1000;
-    double serviceTime = 100.0;
+    double arrivalRate;
+    int servers;
+    double serviceTime;
 
-    double measurementInterval = 1.0;
-    int maxMeasurements = 1000;
+    double measurementInterval;
+    int maxMeasurements;
 
     List<Integer> measurements = new ArrayList<Integer>();
 
 	Random random;
     
-    public State(long seed) {
+    public State(
+            long seed,
+            double _arrivalRate,
+            int _servers,
+            double _serviceTime,
+            double _measurementInterval) {
         random = new Random(seed);
+        arrivalRate = _arrivalRate;
+        servers = _servers;
+        serviceTime = _serviceTime;
+        measurementInterval = _measurementInterval;
     }
 	
 	public void treatEvent(Event x){
