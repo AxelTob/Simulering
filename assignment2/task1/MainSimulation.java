@@ -2,23 +2,18 @@ import java.util.*;
 import java.io.*;
 
 
-public class MainSimulation extends GlobalSimulation{
- 
+public class MainSimulation extends GlobalSimulation {
     public static void main(String[] args) throws IOException {
-    	Event actEvent;
-    	State actState = new State(); // The state that shoud be used
-    	// Some events must be put in the event list at the beginning
+    	State state = new State(0);
         insertEvent(ARRIVAL, 0);  
-        insertEvent(MEASURE, 5);
+        insertEvent(MEASURE, 0);
         
-        // The main simulation loop
-    	while (time < 5000){
-    		actEvent = eventList.fetchEvent();
-    		time = actEvent.eventTime;
-    		actState.treatEvent(actEvent);
+    	while (state.measurements.size() < state.maxMeasurements){
+    		Event event = eventList.fetchEvent();
+    		time = event.eventTime;
+    		state.treatEvent(event);
     	}
     	
-    	// Printing the result of the simulation, in this case a mean value
-    	System.out.println(1.0*actState.accumulated/actState.noMeasurements);
+    	System.out.println(state.measurements.size());
     }
 }
