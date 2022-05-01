@@ -12,16 +12,32 @@ public class MainSimulation extends Global{
 	}
 
     public static void main(String[] args) throws IOException {
-		var result = runSimulation();
+		File dir = new File("assignment2/task2/results");
+		if(!dir.exists()){
+			dir.mkdirs();
+		}
+		FileWriter averages = new FileWriter(new File(dir,"queue_averages.txt"));
+		FileWriter extraminutes = new FileWriter(new File(dir,"extraminutes.txt"));
+		
+		for(int i = 0; i < 1000; i++){
 
-		OptionalDouble average = result.queueTimes
-			.stream()
-			.mapToDouble(a -> a)
-			.average();
+			var result = runSimulation();
 
-		System.out.println(average.isPresent() ? average.getAsDouble() : 0);
+			OptionalDouble average = result.queueTimes
+				.stream()
+				.mapToDouble(a -> a)
+				.average();
+			
+			averages.write(
+				String.valueOf(average.isPresent() ? average.getAsDouble() : 0)
+				+ System.lineSeparator());
 
-		System.out.println("yoo  " + result.extraMinutesOpen);
+			 extraminutes.write(
+				 String.valueOf(result.extraMinutesOpen)
+				 + System.lineSeparator()
+			 );
+	
+		}
     }
 
 	private static SimulationResult runSimulation() {
