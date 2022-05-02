@@ -19,7 +19,7 @@ public class MainSimulation extends Global{
 		FileWriter averages = new FileWriter(new File(dir,"queue_averages.txt"));
 		FileWriter extraminutes = new FileWriter(new File(dir,"extraminutes.txt"));
 		
-		for(int i = 0; i < 100000; i++){
+		for(int i = 0; i < 10000; i++){
 
 			var result = runSimulation(i);
 
