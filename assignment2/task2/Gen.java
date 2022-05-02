@@ -9,8 +9,8 @@ class Gen extends Proc{
 	public Proc sendTo;    //Anger till vilken process de genererade kunderna ska skickas //Where to send customers
 	public int generatedPeople = 0;
     public int mean = 15; // 15 minutes / arrival. (4 per hour)
+	public Random random;
 
-	Random random;
 	public Gen(long seed){
 		random = new Random(seed);
 	}
@@ -23,20 +23,19 @@ class Gen extends Proc{
                 SignalList.SendSignal(ARRIVAL, sendTo, time);
 
                 // call back
-                SignalList.SendSignal(GENERATE, this, time + getPoissonRandom(mean)); // 4 peps / h
+                SignalList.SendSignal(GENERATE, this, time + getPoissonRandom(random, mean)); // 4 peps / h
                 
 			}
 				break;
         }
 	}
 
-    private static int getPoissonRandom(double mean) {
-        Random r = new Random();
+    private static int getPoissonRandom(Random random, double mean) {
         double L = Math.exp(-mean);
         int k = 0;
         double p = 1.0;
         do {
-            p = p * r.nextDouble();
+            p = p * random.nextDouble();
             k++;
         } while (p > L);
         return k - 1;

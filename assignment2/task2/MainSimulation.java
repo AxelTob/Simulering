@@ -12,16 +12,16 @@ public class MainSimulation extends Global{
 	}
 
     public static void main(String[] args) throws IOException {
-		File dir = new File("assignment2/task2/results");
+		File dir = new File("results");
 		if(!dir.exists()){
 			dir.mkdirs();
 		}
 		FileWriter averages = new FileWriter(new File(dir,"queue_averages.txt"));
 		FileWriter extraminutes = new FileWriter(new File(dir,"extraminutes.txt"));
 		
-		for(int i = 0; i < 1000; i++){
+		for(int i = 0; i < 100000; i++){
 
-			var result = runSimulation();
+			var result = runSimulation(i);
 
 			OptionalDouble average = result.queueTimes
 				.stream()
@@ -38,15 +38,18 @@ public class MainSimulation extends Global{
 			 );
 	
 		}
+		averages.close();
+		extraminutes.close();
+
     }
 
-	private static SimulationResult runSimulation() {
+	private static SimulationResult runSimulation(int i) {
     	new SignalList();
 		time = 0.0;
 
-		Pharmacy Ph = new Pharmacy(0);
+		Pharmacy Ph = new Pharmacy(i);
 
-    	Gen Generator = new Gen(1);
+    	Gen Generator = new Gen(i+1);
     	Generator.sendTo = Ph;
 
     	SignalList.SendSignal(GENERATE, Generator, time);
