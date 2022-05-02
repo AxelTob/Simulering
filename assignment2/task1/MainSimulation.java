@@ -44,6 +44,7 @@ public class MainSimulation extends GlobalSimulation {
             var out =
                 new PrintWriter(new FileOutputStream(args.outputFilename));
 
+            out.println("" + args.serviceTime + "," + args.measurementInterval);
             for(var measurement : measurements) {
                 out.println(measurement);
             }
@@ -66,7 +67,7 @@ public class MainSimulation extends GlobalSimulation {
         insertEvent(ARRIVAL, 0);  
         insertEvent(MEASURE, 0);
         
-    	while (state.measurements.size() < args.maxMeasurements){
+    	while (state.measurements.size() < args.maxMeasurements) {
     		Event event = eventList.fetchEvent();
     		time = event.eventTime;
     		state.treatEvent(event);
