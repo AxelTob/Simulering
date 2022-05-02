@@ -23,7 +23,7 @@ class Gen extends Proc{
                 SignalList.SendSignal(ARRIVAL, sendTo, time);
 
                 // call back
-                SignalList.SendSignal(GENERATE, this, time + expRandom(1/mean)); // 4 peps / h
+                SignalList.SendSignal(GENERATE, this, time + expRandom(1.0/mean)); // 4 peps / h
                 
 			}
 				break;
