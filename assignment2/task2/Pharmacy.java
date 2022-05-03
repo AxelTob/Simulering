@@ -9,6 +9,7 @@ class Pharmacy extends Proc {
     double noMeasurements = 0;
     Queue<Customer> queue= new LinkedList<>();
     List<Double> finishedTimes = new ArrayList<>();
+    List<Integer> measurements = new ArrayList<>();
     double open = 9.0;
     double close = 17.0;
     boolean closed;
@@ -64,6 +65,11 @@ class Pharmacy extends Proc {
                 }
             }
                 break;
+            
+            case MEASURE: {
+                measurements.add(queue.size());
+                SignalList.SendSignal(MEASURE, this, time + GetRandomNumber(1,2));
+            }
 
 
     }

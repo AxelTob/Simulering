@@ -1,56 +1,80 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pathlib import Path
+from scipy.stats import t
 
 
-def normal():
-    # box plot normal times
-    data_1 = np.loadtxt("normaltimes0.1.txt")
-    data_2 = np.loadtxt("normaltimes0.2.txt")
-    data_3 = np.loadtxt("normaltimes0.5.txt")
-    df = pd.DataFrame({
-        "0.1": pd.Series(data_1),
-        "0.2": pd.Series(data_2),
-        "0.5": pd.Series(data_3)
-    })
+def plot_one_run(file):
+    x = pd.Series(np.loadtxt(file))
+    ax = x.plot()
+    ax.set_ylabel('People in Q')
+    ax.set_xlabel('measurements')
+    plt.savefig(f'{"one plotty"}.png')
 
-    # Plot the dataframe
-    ax = df.plot.box()
-    ax.set_xlabel("Probability of Special")
-    ax.set_ylabel("Time in queue")
-    ax.set_title("Normal customers")
 
-    # Display the plot
-    plt.savefig('normal_customers_figure.png')
-    plt.show()
+def __box_plot(file, y_label, title):
+    data = pd.Series(np.loadtxt(file))
+    df = pd.DataFrame(data)
+    ax = df.plot.box(showfliers=False)
+    ax.set_ylabel(y_label)
+    ax.set_title(title)
+    plt.savefig(f'{title}.png')
 
-def special():
-    # box plot special times
-    data_1 = np.loadtxt("specialtimes0.1.txt")
-    data_2 = np.loadtxt("specialtimes0.2.txt")
-    data_3 = np.loadtxt("specialtimes0.5.txt")
-    df = pd.DataFrame({
-        "0.1": pd.Series(data_1),
-        "0.2": pd.Series(data_2),
-        "0.5": pd.Series(data_3)
-    })
 
-    # Plot the dataframe
-    ax = df.plot.box()
-    ax.set_xlabel("Probability of Special")
-    ax.set_ylabel("Time in queue")
-    ax.set_title("Special customers")
+def __confidence_intervall(file):
 
-    # Display the plot
-    plt.savefig('special_customers_figure.png')
-    plt.show()
+    x = pd.Series(np.loadtxt(file))
+    m = x.mean() 
+    s = x.std()
+    std_mean = s/np.sqrt(len(x))
+    dof = len(x)-1 
+    confidence = 0.95
+    t_crit = np.abs(t.ppf((1-confidence)/2,dof))
 
-if __name__ == "__main__":
+    lower = m - std_mean*t_crit
+    upper = m + std_mean*t_crit
 
-    if not Path("normaltimes0.1.txt"):
-        print("ERROR: Must run MainSimulation to generate result files")
-        exit()
+    print(f'mean: {np.round(m,4)}, '
+        f'std_mean: {np.round(std_mean,4)}',
+        f't_crit: {np.round(t_crit,4)}, '
+        f'ci: [{np.round(lower,4)}, {np.round(upper,4)}]')
 
-    normal()
-    special()
+
+def average_time_finished_work():
+    __confidence_intervall('extra_minutes_open.txt')
+
+
+def average_queing_time():
+    __confidence_intervall('queue_average_queuing_time.txt')
+
+
+def box_plot_finished_work():
+    __box_plot(
+        file='extra_minutes_open.txt',
+        y_label='Minutes',
+        title='Extra minutes Open after closing hours')
+
+
+def box_plot_average_queing_time():
+    __box_plot(
+        file='queue_average_queuing_time.txt',
+        y_label='Minutes',
+        title='Average time from arrival until filled')
+
+# What is the average time when their work will have finished every day? Use 95% confidence intervals 
+print('Average time to close store, after opening hours: \n')
+average_time_finished_work()
+box_plot_finished_work()
+# What is the average time from the arrival of a prescription until it has been filled? Use 95% confidence 
+# intervals
+print('Average time spent in queue\n')
+average_queing_time()
+box_plot_average_queing_time()
+
+# For queue size average
+print('Queue size averages\n')
+__confidence_intervall('queue_size_measurements.txt')
+
+#plot one run
+print('One run\n')
+plot_one_run('queue_one_run.txt')
