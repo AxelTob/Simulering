@@ -48,54 +48,58 @@ class Main{
     
 
     public static void main(String[] args) throws IOException{
-        FileWriter wealthWriter = new FileWriter("wealth_per_month.csv");
-        wealthWriter.write("Month,Wealth"+System.lineSeparator());
 
-        var random = new Random(1);
-        ArrayList<Integer> monthsTillBoatList = new ArrayList<Integer>();
+        Double[] params = {5000.0, 10000.0, 20000.0};
+        double monthlySavings;
+        for(Double dd : params){
+            monthlySavings = dd;
+            System.out.println("Monthly savings: " + (int) monthlySavings);
 
-        for(int i = 0; i < 1000; i++){
-            int month = 0;
-            double yearlyGrowth = 1.3;
-            double monthlyGrowth = Math.pow(yearlyGrowth, 1.0/12);
-            double monthlySavings = 5000;
-            double wealth = monthlySavings;
-            int monthsUntilDrop = nextDrop(month, random);
-            double goal = 2e6;
+            FileWriter wealthWriter = new FileWriter("wealth_per_month_" +(int)monthlySavings+ ".csv");
+            wealthWriter.write("Month,Wealth"+System.lineSeparator());
+            var random = new Random(1);
+            ArrayList<Integer> monthsTillBoatList = new ArrayList<Integer>();
 
-            while(wealth < goal){
-                if(monthsUntilDrop==0){
-                    wealth = drop(wealth, random);
-                    monthsUntilDrop = nextDrop(month, random);
+            for(int i = 0; i < 1000; i++){
+                int month = 0;
+                double yearlyGrowth = 1.3;
+                double monthlyGrowth = Math.pow(yearlyGrowth, 1.0/12);
+                double wealth = monthlySavings;
+                int monthsUntilDrop = nextDrop(month, random);
+                double goal = 2e6;
+
+                while(wealth < goal){
+                    if(monthsUntilDrop==0){
+                        wealth = drop(wealth, random);
+                        monthsUntilDrop = nextDrop(month, random);
+                    }
+                    wealth *= monthlyGrowth;
+                    wealth += monthlySavings;
+                    month++;
+                    monthsUntilDrop--;
+                    wealthWriter.write("" + month + "," + wealth + System.lineSeparator());
                 }
-                wealth *= monthlyGrowth;
-                wealth += monthlySavings;
-                month++;
-                monthsUntilDrop--;
-                wealthWriter.write("" + month + "," + wealth + System.lineSeparator());
+                monthsTillBoatList.add(month);
             }
-            System.out.println(month);
-            monthsTillBoatList.add(month);
-        }
-        wealthWriter.close();
-        FileWriter writer = new FileWriter("months_till_boat.csv");
-        writer.write("Months Till Boat" + System.lineSeparator());
-        for(Integer i: monthsTillBoatList) {
-                writer.write(i + System.lineSeparator());
-                }
-        writer.close();
+            wealthWriter.close();
+            FileWriter writer = new FileWriter("months_till_boat_" + (int) monthlySavings + ".csv");
+            writer.write("Months Till Boat" + System.lineSeparator());
+            for(Integer i: monthsTillBoatList) {
+                    writer.write(i + System.lineSeparator());
+                    }
+            writer.close();
 
-        OptionalDouble mean = monthsTillBoatList
-            .stream()
-            .mapToDouble(a -> a)
-            .average();
-        
-        double stDev = std(monthsTillBoatList);
-        double meanStDev = stDev/Math.sqrt(monthsTillBoatList.size());
+            OptionalDouble mean = monthsTillBoatList
+                .stream()
+                .mapToDouble(a -> a)
+                .average();
+            
+            double stDev = std(monthsTillBoatList);
+            double meanStDev = stDev/Math.sqrt(monthsTillBoatList.size());
 
-        System.out.println("mean: " + mean.getAsDouble());
-        System.out.println("std: " + stDev);
-        System.out.println("std_mean: " + meanStDev);
-        
+            System.out.println("mean: " + mean.getAsDouble());
+            System.out.println("std: " + stDev);
+            System.out.println("std_mean: " + meanStDev + "\n");
+            }
     }
 }
