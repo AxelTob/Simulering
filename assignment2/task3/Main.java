@@ -11,20 +11,39 @@ class Main{
     
     private static double drop(double wealth, Random random) {
         double p = random.nextDouble();
-        double drop;
+        double remaining;
         if(p<0.1){
-            drop = 0.75;
+            remaining = 0.75;
         }
         else if(p < 0.35){
-            drop = 0.5;
+            remaining = 0.5;
         }
         else if(0 < 0.6){
-            drop = 0.4;
+            remaining = 0.4;
         }
         else{
-            drop = 0.9;
+            remaining = 0.9;
         }
-        return wealth * drop;
+        double newWealth = wealth * remaining;
+        return newWealth;
+        }
+
+        public static double std(ArrayList<Integer> arrList)
+        {
+            double sum = 0.0, deviation = 0.0;
+            int length = arrList.size();
+    
+            for(double num : arrList) {
+                sum += num;
+            }
+    
+            double mean = sum/length;
+    
+            for(double num: arrList) {
+                deviation += Math.pow(num - mean, 2);
+            }
+            double std = Math.sqrt(deviation/length);
+            return std;
         }
     
 
@@ -59,11 +78,24 @@ class Main{
             monthsTillBoatList.add(month);
         }
         wealthWriter.close();
-        FileWriter writer = new FileWriter("MonthsTillBoat.csv");
+        FileWriter writer = new FileWriter("months_till_boat.csv");
         writer.write("Months Till Boat" + System.lineSeparator());
         for(Integer i: monthsTillBoatList) {
                 writer.write(i + System.lineSeparator());
                 }
         writer.close();
+
+        OptionalDouble mean = monthsTillBoatList
+            .stream()
+            .mapToDouble(a -> a)
+            .average();
+        
+        double stDev = std(monthsTillBoatList);
+        double meanStDev = stDev/Math.sqrt(monthsTillBoatList.size());
+
+        System.out.println("mean: " + mean.getAsDouble());
+        System.out.println("std: " + stDev);
+        System.out.println("std_mean: " + meanStDev);
+        
     }
 }
