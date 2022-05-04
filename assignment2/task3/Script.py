@@ -28,7 +28,11 @@ for key in month_df_dict.keys():
     mean_std = df['Months Till Boat'].std()/np.sqrt(len(df['Months Till Boat']))
     print(f'mean_std: {mean_std}')
 
-    print(f'CI: {sms.DescrStatsW(df["Months Till Boat"]).tconfint_mean()} \n')
+    print(f'CI: {sms.DescrStatsW(df["Months Till Boat"]).tconfint_mean()}')
+
+    min_months = df['Months Till Boat'].min()
+    max_months = df['Months Till Boat'].max()
+    print(f'min, max months: {min_months}, {max_months} \n')
 
 
 fig = plt.figure(figsize =(6, 4))
