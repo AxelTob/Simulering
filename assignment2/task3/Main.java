@@ -59,7 +59,7 @@ class Main{
             wealthWriter.write("Month,Wealth"+System.lineSeparator());
             var random = new Random(1);
             ArrayList<Integer> monthsTillBoatList = new ArrayList<Integer>();
-
+            int dropCounter = 0;
             for(int i = 0; i < 1000; i++){
                 int month = 0;
                 double yearlyGrowth = 1.3;
@@ -72,6 +72,7 @@ class Main{
                     if(monthsUntilDrop==0){
                         wealth = drop(wealth, random);
                         monthsUntilDrop = nextDrop(month, random);
+                        dropCounter++;
                     }
                     wealth *= monthlyGrowth;
                     wealth += monthlySavings;
@@ -99,7 +100,8 @@ class Main{
 
             System.out.println("mean: " + mean.getAsDouble());
             System.out.println("std: " + stDev);
-            System.out.println("std_mean: " + meanStDev + "\n");
+            System.out.println("std_mean: " + meanStDev);
+            System.out.println("average drops: " + (double)dropCounter/1000.0 + "\n");
             }
     }
 }
