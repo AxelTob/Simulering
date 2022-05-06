@@ -1,2 +1,3 @@
 *.class
 package-lock.json
+*.csv
