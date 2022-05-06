@@ -1,6 +1,10 @@
 *.class
 package-lock.json
+<<<<<<< HEAD
 .DS_STORE
 *.png
 *.txt
 *.csv
+=======
+*.csv
+>>>>>>> 62ac99bedfa307b5c2cf8940bb0de0f362ab70b6
