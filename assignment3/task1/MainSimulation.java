@@ -1,51 +1,86 @@
 import java.util.*;
 import java.io.*;
 
-//Denna klass ärver Global så att man kan använda time och signalnamnen utan punktnotation
-//It inherits Proc so that we can use time and the signal names without dot notation
+public class MainSimulation extends Global {
+    static class SimulationArgs {
+        public int numTransmitters;
+        public double meanSleepTime;
+        public double transmissionTime;
+        public double radius;
+    }
 
+    static class Configuration {
+        List<Transmitter> transmitters;
+        List<SimulationArgs> argss;
+    }
 
-public class MainSimulation extends Global{
+    static class Transmitter {
+        public double x;
+        public double y;
+        public double startTime;
+    }
 
     public static void main(String[] args) throws IOException {
+        var configuration = loadConfiguration();
+    }
+    
+    private static Configuration loadConfiguration() throws IOException {
+        var reader =
+            new BufferedReader(
+                new InputStreamReader( System.in ) );
 
-    	//Signallistan startas och actSignal deklareras. actSignal är den senast utplockade signalen i huvudloopen nedan.
-    	// The signal list is started and actSignal is declaree. actSignal is the latest signal that has been fetched from the 
-    	// signal list in the main loop below.
+        var argss = new ArrayList<SimulationArgs>();
 
-    	Signal actSignal;
+        String line = reader.readLine();
+        int numSimulations = Integer.parseInt(line);
+        for(int i = 0; i < numSimulations; ++i) {
+            line = reader.readLine();
+            var fields = line.split(",");
+            var args = new SimulationArgs();
+
+            args.numTransmitters = Integer.parseInt(fields[0]);
+            args.meanSleepTime = Double.parseDouble(fields[1]);
+            args.transmissionTime = Double.parseDouble(fields[2]);
+            args.radius = Double.parseDouble(fields[3]);
+
+            argss.add(args);
+        }
+
+        var transmitters = new ArrayList<Transmitter>();
+
+        line = reader.readLine();
+        while(line != null) {
+            var fields = line.split(",");
+            var transmitter = new Transmitter();
+
+            transmitter.x = Double.parseDouble(fields[0]);
+            transmitter.y = Double.parseDouble(fields[1]);
+            transmitter.startTime = Double.parseDouble(fields[2]);
+            transmitters.add(transmitter);
+
+            line = reader.readLine();
+        }
+
+        var configuration = new Configuration();
+        configuration.argss = argss;
+        configuration.transmitters = transmitters;
+        return configuration;
+    }
+
+    private static void runSimulation(String[] args) {
+        /*
     	new SignalList();
-
-    	//Här nedan skapas de processinstanser som behövs och parametrar i dem ges värden.
-    	// Here process instances are created (two queues and one generator) and their parameters are given values. 
-
-    	QS Q1 = new QS();
-    	Q1.sendTo = null;
-
-    	Gen Generator = new Gen();
-    	Generator.lambda = 9; //Generator ska generera nio kunder per sekund  //Generator shall generate 9 customers per second
-    	Generator.sendTo = Q1; //De genererade kunderna ska skickas till kösystemet QS  // The generated customers shall be sent to Q1
-
-    	//Här nedan skickas de första signalerna för att simuleringen ska komma igång.
-    	//To start the simulation the first signals are put in the signal list
 
     	SignalList.SendSignal(READY, Generator, time);
     	SignalList.SendSignal(MEASURE, Q1, time);
 
-
-    	// Detta är simuleringsloopen:
-    	// This is the main loop
-
     	while (time < 100000){
-    		actSignal = SignalList.FetchSignal();
+    		Signal actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);
     	}
 
-    	//Slutligen skrivs resultatet av simuleringen ut nedan:
-    	//Finally the result of the simulation is printed below:
-
     	System.out.println("Mean number of customers in queuing system: " + 1.0*Q1.accumulated/Q1.noMeasurements);
-
+        */
     }
 }

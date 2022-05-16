@@ -1,9 +1,9 @@
-// Denna klass definierar signallistan. Om man vill skicka mer information i signalen än minimum, så kan
-// man skriva ytterligare variante av SendSignal som innehåller fler parametrar.
 
-// This class defines the signal list. If one wants to send more information than here,
-// one can add the extra information in the Signal class and write an extra sendSignal method 
-// with more parameters. 
+
+
+
+
+
 
 public class SignalList{
 	private  static Signal list, last;
