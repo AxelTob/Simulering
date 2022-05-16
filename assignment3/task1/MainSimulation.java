@@ -20,8 +20,16 @@ public class MainSimulation extends Global {
         public double startTime;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] dummy) throws IOException {
         var configuration = loadConfiguration();
+        for(var args : configuration.argss) {
+            var transmitters =
+                configuration
+                    .transmitters
+                    .subList(0, args.numTransmitters);
+
+            runSimulation(args, transmitters);
+        }
     }
     
     private static Configuration loadConfiguration() throws IOException {
@@ -67,20 +75,16 @@ public class MainSimulation extends Global {
         return configuration;
     }
 
-    private static void runSimulation(String[] args) {
-        /*
+    private static void runSimulation(
+            SimulationArgs args, 
+            List<Transmitter> transmitters) {
     	new SignalList();
 
-    	SignalList.SendSignal(READY, Generator, time);
-    	SignalList.SendSignal(MEASURE, Q1, time);
-
-    	while (time < 100000){
+    	while (time < 100000) {
     		Signal actSignal = SignalList.FetchSignal();
+            if(actSignal.destination == null) { return; }
     		time = actSignal.arrivalTime;
     		actSignal.destination.TreatSignal(actSignal);
     	}
-
-    	System.out.println("Mean number of customers in queuing system: " + 1.0*Q1.accumulated/Q1.noMeasurements);
-        */
     }
 }
