@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+import random
+
+random.seed(1337)
+
 N=10
 print(N)
 for n in range(N):
