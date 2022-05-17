@@ -15,11 +15,13 @@ public class MainSimulation extends GlobalSimulation{
 		readFile(actGrid);
 		
 		// The main simulation loop
-		while (time < 5000){
+		while (actGrid.new_meetings < 5){
 			actEvent = eventList.fetchEvent();
 			time = actEvent.eventTime;
 			actGrid.treatEvent(actEvent);
+			System.out.println(actGrid.new_meetings);
 		}
+		System.out.println(time);
 		
 		// Printing the result of the simulation, in this case a mean value
 	
@@ -33,6 +35,7 @@ public class MainSimulation extends GlobalSimulation{
 		while(line != null) {
 			var fields = line.split(",");
 			var student = actGrid.new Student();
+			System.out.println("x :" + fields[0] + " y : " + fields[1]);
 			student.square = actGrid.grid[Integer.parseInt(fields[0])][Integer.parseInt(fields[1])];
 			student.speed = 2.0;
 			student.talking = false;

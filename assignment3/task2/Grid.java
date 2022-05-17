@@ -4,7 +4,7 @@ import java.math.*;
 
 public class Grid extends GlobalSimulation{
 	public Square grid[][];
-
+	public int new_meetings = 0;
 	public Grid(){
 		grid = new Square[20][20];
 
@@ -111,12 +111,18 @@ public class Grid extends GlobalSimulation{
 		double eventTime = x.eventTime + (distance/ x.student.speed);
 
 		for (Student s : x.student.square.students){
-			if(!s.talking){
+			
+			if(!s.talking && s != x.student){
 				s.talking = true;
 				// insert postponed Event for partner s 
 				Event postponed_event = new Event(s, s.nextEvent.entering_square, s.nextEvent.eventTime + 60.0);
 				insertEvent(postponed_event);
 				s.nextEvent = postponed_event;
+				// ugly but should be fine
+				if(!s.students_met.contains(x.student)){
+					// new friends
+					new_meetings++;
+				}
 				s.students_met.add(x.student);
 				// Set x to talking and postpone eventTime
 				x.student.talking = true;
