@@ -3,22 +3,45 @@ import java.io.*;
 
 
 public class MainSimulation extends GlobalSimulation{
- 
+	
     public static void main(String[] args) throws IOException {
-    	Event actEvent;
-    	State actState = new State(); // The state that shoud be used
-    	// Some events must be put in the event list at the beginning
-        insertEvent(ARRIVAL, 0);  
-        insertEvent(MEASURE, 5);
-        
-        // The main simulation loop
-    	while (time < 5000){
-    		actEvent = eventList.fetchEvent();
-    		time = actEvent.eventTime;
-    		actState.treatEvent(actEvent);
-    	}
-    	
-    	// Printing the result of the simulation, in this case a mean value
-    	System.out.println(1.0*actState.accumulated/actState.noMeasurements);
-    }
+		runSimulation();
+	}
+
+	public static void runSimulation() throws IOException {
+		Event actEvent;
+		Grid actGrid = new Grid(); // The state that shoud be used
+		// Some events must be put in the event list at the beginning
+		readFile(actGrid);
+		
+		// The main simulation loop
+		while (time < 5000){
+			actEvent = eventList.fetchEvent();
+			time = actEvent.eventTime;
+			actGrid.treatEvent(actEvent);
+		}
+		
+		// Printing the result of the simulation, in this case a mean value
+	
+	}
+
+	public static void readFile(Grid actGrid) throws IOException {
+		var reader =
+            new BufferedReader(
+                new InputStreamReader( System.in ) );
+		String line = reader.readLine();
+		while(line != null) {
+			var fields = line.split(",");
+			var student = actGrid.new Student();
+			student.square = actGrid.grid[Integer.parseInt(fields[0])][Integer.parseInt(fields[1])];
+			student.speed = 2.0;
+			student.talking = false;
+			student.direction = Grid.Direction.values()[Integer.parseInt(fields[2])];
+			student.squares_counter = Integer.parseInt(fields[3]);
+			Event firstEvent = new Event(student, student.square, 0.0);
+			student.nextEvent = firstEvent;
+			insertEvent(firstEvent);
+			line = reader.readLine();
+		}
+	}
 }

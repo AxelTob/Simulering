@@ -2,16 +2,34 @@ import java.util.*;
 import java.io.*;
 import java.math.*;
 
-class Grid extends GlobalSimulation{
-	class Student {
+public class Grid extends GlobalSimulation{
+	public Square grid[][];
+
+	public Grid(){
+		grid = new Square[20][20];
+
+		for (int row = 0; row < grid.length; row++) {
+			for (int col = 0; col < grid[row].length; col++) {
+				
+				Square square = new Square();
+				square.position = new Position(col, row); // might mess it up
+				grid[col][row] = square;
+			   
+			}
+		 }
+		
+	}
+	public class Student {
 		public Square square;
 		public double speed;
 		public boolean talking;
 		public Direction direction;
 		public int squares_counter;
+		public List<Student> students_met = new ArrayList<>();;
+		public Event nextEvent;
 	}
 
-	class Position {
+	public static class Position {
 		public int x;
 		public int y;
 
@@ -25,9 +43,9 @@ class Grid extends GlobalSimulation{
 		}
 	}
 	
-	class Square {
+	public class Square {
 		public Position position;
-		public List<Student> students;
+		public List<Student> students = new ArrayList<>();
 	}
 
 	public enum Direction {
@@ -51,37 +69,69 @@ class Grid extends GlobalSimulation{
 					return new Position(-1, 0);
 				case UP_LEFT:
 					return new Position(-1, 1);
+				default:
+					return null;
 			}
 		}
 	}
 
-	public Square grid[][] = new Square[20][20];
+	
 
 	// Here follows the state variables and other variables that might be needed
 	// e.g. for measurements
 	
 
-	Random slump = new Random(); // This is just a random number generator
+	Random random = new Random(1); // This is just a random number generator
 	
 	
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
 	public void treatEvent(Event x){
+		
+		if(x != x.student.nextEvent){
+			return;
+		}
 		x.student.square.students.remove(
 			x.student
 		);
 		x.entering_square.students.add(
 			x.student
 		);
+
+		if(x.student.squares_counter == 0){
+			x.student.direction = randomDirection();
+			x.student.squares_counter = random.nextInt(10) + 1;
+		}
 		Square entering_square = enteringSquare(x.student);
 
 		double distance = 
-				Math.sqrt(Math.pow((double)direction.offset().x,2.0)
-						+ Math.pow((double)direction.offset().y,2.0));
+				Math.sqrt(Math.pow((double)x.student.direction.offset().x,2.0)
+						+ Math.pow((double)x.student.direction.offset().y,2.0));
 
 		double eventTime = x.eventTime + (distance/ x.student.speed);
 
-		insertEvent(x.student, entering_square, eventTime);
+		for (Student s : x.student.square.students){
+			if(!s.talking){
+				s.talking = true;
+				// insert postponed Event for partner s 
+				Event postponed_event = new Event(s, s.nextEvent.entering_square, s.nextEvent.eventTime + 60.0);
+				insertEvent(postponed_event);
+				s.nextEvent = postponed_event;
+				s.students_met.add(x.student);
+				// Set x to talking and postpone eventTime
+				x.student.talking = true;
+				eventTime += 60.0;
+				x.student.students_met.add(s);
+				break; // makes sense , right?
+			}
+		}
+
+		Event newEvent = new Event(x.student, entering_square, eventTime);
+
+		x.student.nextEvent	= newEvent;
+
+		insertEvent(newEvent);
+		
 
 	}
 
@@ -90,13 +140,19 @@ class Grid extends GlobalSimulation{
 	// have been placed in the case in treatEvent, but often it is simpler to write a method if 
 	// things are getting more complicated than this.
 	
-	private Square enteringSquare(Student student){
+	public Square enteringSquare(Student student){
 		
 		var newPos = student.square.position.add(student.direction.offset());
-		return Grid[newPos.x][newPos.y];
+		if(outSideGrid(newPos)){
+			student.direction = randomDirection();
+			enteringSquare(student);
+		}
+		return grid[newPos.x][newPos.y];
 	}
-	private Direction randomDirection(){
+	public Direction randomDirection(){
 		return Direction.values()[new Random().nextInt(Direction.values().length)];
 	}
-
+	public boolean outSideGrid(Position newPos){
+		return newPos.x > 19 || newPos.y > 19 || newPos.x < 0 || newPos.y < 0;
+	}
 }

@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 class Gateway extends Proc {
-	Random slump = new Random();
+	Random slump = new Random(1);
 
     public int totalTransmissions;
     public int successfulTransmissions;

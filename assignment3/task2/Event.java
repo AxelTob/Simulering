@@ -5,7 +5,17 @@
 
 class Event{
 	public double eventTime;
-	public Square entering_square;
-	public Student student;
+	public Grid.Square entering_square;
+	public Grid.Student student;
 	public Event next;
+
+	public Event(Grid.Student student, Grid.Square entering_square, double eventTime){
+		this.student = student;
+		this.entering_square = entering_square;
+		this.eventTime = eventTime;
+	}
+	public Event(){
+		
+	}
 }
+

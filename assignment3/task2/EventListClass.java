@@ -12,12 +12,8 @@ public class EventListClass {
 	// The method insertEvent creates a new event, and searches the list of events for the 
 	// right place to put the new event.
 	
-	public void InsertEvent(Student student, Square entering_square, double TimeOfEvent){
+	public void InsertEvent(Event newEvent){
  	Event dummy, predummy;
- 	Event newEvent = new Event();
- 	newEvent.student = student;
-	newEvent.entering_square = entering_square;
- 	newEvent.eventTime = TimeOfEvent;
  	predummy = list;
  	dummy = list.next;
  	while ((dummy.eventTime < newEvent.eventTime) & (dummy != last)){

@@ -8,7 +8,7 @@ public class GlobalSimulation{
 	public static final int ARRIVAL = 1; // The events, add or remove if needed!
 	public static double time = 0; // The global time variable
 	public static EventListClass eventList = new EventListClass(); // The event list used in the program
-	public static void insertEvent(Student student, Square entering_square, double TimeOfEvent){  // Just to be able to skip dot notation
-		eventList.InsertEvent(Student student, Square entering_square, TimeOfEvent);
+	public static void insertEvent(Event newEvent){  // Just to be able to skip dot notation
+		eventList.InsertEvent(newEvent);
 	}
 }
