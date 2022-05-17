@@ -102,6 +102,7 @@ public class Grid extends GlobalSimulation{
 		x.entering_square.students.add(
 			x.student
 		);
+		x.student.square = x.entering_square;
 
 		if(x.student.squares_counter == 0){
 			x.student.direction = randomDirection();
