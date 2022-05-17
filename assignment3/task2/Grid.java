@@ -94,6 +94,7 @@ public class Grid extends GlobalSimulation{
 		x.student.square.students.remove(
 			x.student
 		);
+		x.student.talking = false;
 		x.entering_square.students.add(
 			x.student
 		);
@@ -129,6 +130,7 @@ public class Grid extends GlobalSimulation{
 				eventTime += 60.0;
 				x.student.students_met.add(s);
 				break; // makes sense , right?
+				
 			}
 		}
 
