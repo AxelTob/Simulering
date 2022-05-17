@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 public class SignalList{
 	private  static Signal list, last;
 
