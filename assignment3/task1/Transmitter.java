@@ -7,9 +7,13 @@ class Transmitter extends Proc {
     private List<Proc> neighbors;
 
     private double transmissionTime = 1.0; // FIXME
+    private double meanSleepTime = 4000;
 
-    public Transmitter(long seed, List<Proc> neighbors) {
+    public Transmitter(long seed) {
         this.random = new Random(seed);
+    }
+
+    public void setNeighbors(List<Proc> neighbors) {
         this.neighbors = neighbors;
     }
 
@@ -25,10 +29,16 @@ class Transmitter extends Proc {
             }
 
             SignalList.SendSignal(
+                    TRANSMISSION_DONE,
+                    this,
+                    time+transmissionTime);
+        } break;
+        case TRANSMISSION_DONE: {
+            SignalList.SendSignal(
                     TRANSMIT,
                     this,
-                    time+expRandom(1.0/transmissionTime));
-        } break;
+                    time+expRandom(1.0/meanSleepTime));
+        }
         }
 	}
 
