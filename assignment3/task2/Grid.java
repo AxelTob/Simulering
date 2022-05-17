@@ -14,7 +14,8 @@ public class Grid extends GlobalSimulation{
 				Square square = new Square();
 				square.position = new Position(col, row); // might mess it up
 				grid[col][row] = square;
-			   
+			//    System.out.println("--------------------------------");
+			//    System.out.println("x: " + col + " y = " + row);
 			}
 		 }
 		
@@ -70,6 +71,7 @@ public class Grid extends GlobalSimulation{
 				case UP_LEFT:
 					return new Position(-1, 1);
 				default:
+					System.out.println("should never happend");
 					return null;
 			}
 		}
@@ -94,7 +96,9 @@ public class Grid extends GlobalSimulation{
 		x.student.square.students.remove(
 			x.student
 		);
+		//
 		x.student.talking = false;
+		
 		x.entering_square.students.add(
 			x.student
 		);
@@ -149,13 +153,24 @@ public class Grid extends GlobalSimulation{
 	// things are getting more complicated than this.
 	
 	public Square enteringSquare(Student student){
-		
+		// System.out.println("Direction: " + student.direction.toString());
+		// System.out.println("before -- x =" + student.square.position.x 
+		// + ", y =" + student.square.position.y);
 		var newPos = student.square.position.add(student.direction.offset());
-		if(outSideGrid(newPos)){
+		// System.out.println("after -- x =" + newPos.x 
+		// + ", y =" + newPos.y);
+
+		if(!outSideGrid(newPos)){
+			return grid[newPos.x][newPos.y];
+		}else{
 			student.direction = randomDirection();
-			enteringSquare(student);
+			return enteringSquare(student);
 		}
-		return grid[newPos.x][newPos.y];
+		
+		
+		
+		
+
 	}
 	public Direction randomDirection(){
 		return Direction.values()[new Random().nextInt(Direction.values().length)];
