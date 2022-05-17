@@ -2,6 +2,22 @@
 
 import random
 
+# format: csv
+#
+# line 0:
+#  N: number of simulations
+#
+# line 1-N:
+#  n: number of transmitters
+#  t_s: mean time between transmissions
+#  T_p: transmission time
+#  r: transmitter radius
+#
+# line (N+1)-END: transmitter data
+#  x: x coordinate
+#  y: y coordinate
+#  s: time of first transmission
+
 random.seed(1337)
 
 N=10
