@@ -98,6 +98,7 @@ public class MainSimulation extends Global {
         time = 0;
 
         var gateway = new Gateway();
+        var transmissionCounter = new TransmissionCounter();
 
         var transmitters = new ArrayList<Transmitter>();
         for(int i = 0; i < transmitterArgs.size(); ++i) {
@@ -126,6 +127,8 @@ public class MainSimulation extends Global {
                 neighbors.add(gateway);
             }
 
+            neighbors.add(transmissionCounter);
+
             transmitters.get(i).setNeighbors(neighbors);
         }
 
@@ -136,7 +139,7 @@ public class MainSimulation extends Global {
                     transmitterArgs.get(i).startTime);
         }
 
-    	while (true) {
+    	while(true) {
     		Signal actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
             if(time > 10000) {
@@ -147,6 +150,6 @@ public class MainSimulation extends Global {
 
         System.out.println(""
                 + gateway.successfulTransmissions + ", "
-                + gateway.totalTransmissions);
+                + transmissionCounter.totalTransmissions);
     }
 }
