@@ -36,6 +36,7 @@ public class MainSimulation extends Global {
 
     public static void main(String[] dummy) throws IOException {
         var configuration = loadConfiguration();
+        System.out.println(configuration.argss.size());
         for(var args : configuration.argss) {
             var transmitters =
                 configuration
@@ -97,12 +98,12 @@ public class MainSimulation extends Global {
     	new SignalList();
         time = 0;
 
-        var gateway = new Gateway();
+        var gateway = new Gateway(args.transmissionTime);
         var transmissionCounter = new TransmissionCounter();
 
         var transmitters = new ArrayList<Transmitter>();
         for(int i = 0; i < transmitterArgs.size(); ++i) {
-            transmitters.add(new Transmitter(i));
+            transmitters.add(new Transmitter(i, args.transmissionTime));
         }
 
         for(int i = 0; i < transmitterArgs.size(); ++i) {
@@ -142,14 +143,14 @@ public class MainSimulation extends Global {
     	while(true) {
     		Signal actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
-            if(time > 10000) {
+            if(time > 100000) {
                 break;
             }
     		actSignal.destination.TreatSignal(actSignal);
     	}
 
         System.out.println(""
-                + gateway.successfulTransmissions + ", "
+                + gateway.successfulTransmissions + ","
                 + transmissionCounter.totalTransmissions);
     }
 }

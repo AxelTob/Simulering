@@ -6,11 +6,13 @@ class Transmitter extends Proc {
 
     private List<Proc> neighbors;
 
-    private double transmissionTime = 1.0; // FIXME
+    private double transmissionTime;
     private double meanSleepTime = 4000;
+    private double lastInterruption = -1e50;
 
-    public Transmitter(long seed) {
+    public Transmitter(long seed, double transmissionTime/*, int strategy*/) {
         this.random = new Random(seed);
+        this.transmissionTime = transmissionTime;
     }
 
     public void setNeighbors(List<Proc> neighbors) {
@@ -20,6 +22,13 @@ class Transmitter extends Proc {
 	public void TreatSignal(Signal x)  {
         switch(x.signalType) {
         case TRANSMIT: {
+            /* if(strategy == STRATEGY2
+                    && time < lastInterruption + transmissionTime) {
+                SignalList.SendSignal(
+                        TRANSMIT,
+                        this,
+                        time+uniformRandom(lb, ub);
+            } */
             for(var neighbor : neighbors) {
                 var signal = new Signal();
                 signal.destination = neighbor;
