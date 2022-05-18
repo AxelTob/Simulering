@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
+import math
+
+N = int(input())
+data = []
+for i in range(N):
+    line = input()
+    fields = line.split(',')
+    data.append(float(fields[0])/100000)
+
+xs = [(n+1)*1000 for n in range(N)]
+plt.plot(xs, data, label = "measured")
+
+lam = 1/4001
+T = 1
+G = lam*T
+theoretical = [(n+1)*1000*G*math.exp(-2*G*(n+1)*1000) for n in range(N)]
+plt.plot(xs, theoretical, label = "theoretical")
+
+plt.legend()
+plt.show()

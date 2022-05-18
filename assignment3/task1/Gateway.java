@@ -6,7 +6,11 @@ class Gateway extends Proc {
     public int successfulTransmissions;
     private double last = -1e100;
     private boolean collision = false;
-    private double transmissionTime = 1.0; // FIXME
+    private double transmissionTime;
+
+    public Gateway(double transmissionTime) {
+        this.transmissionTime = transmissionTime;
+    }
 
 	public void TreatSignal(Signal x)  {
         switch(x.signalType) {
