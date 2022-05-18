@@ -5,6 +5,9 @@ import java.math.*;
 public class Grid extends GlobalSimulation{
 	public Square grid[][];
 	public int new_meetings = 0;
+	public List<Student> students = new ArrayList<>();
+	public int meetings = 0;
+	public double talking_time;
 	public Grid(){
 		grid = new Square[20][20];
 
@@ -21,13 +24,15 @@ public class Grid extends GlobalSimulation{
 		
 	}
 	public class Student {
+		public int student_id;
 		public Square square;
 		public double speed;
 		public boolean talking;
 		public Direction direction;
 		public int squares_counter;
-		public List<Student> students_met = new ArrayList<>();;
-		public Event nextEvent;
+		public List<Student> students_met = new ArrayList<>();
+		public EnteringEvent nextEvent;
+		public List<Square> walkingRoute = new ArrayList<>();
 	}
 
 	public static class Position {
@@ -47,6 +52,7 @@ public class Grid extends GlobalSimulation{
 	public class Square {
 		public Position position;
 		public List<Student> students = new ArrayList<>();
+		public int Meeting_Counter = 0;
 	}
 
 	public enum Direction {
@@ -89,65 +95,14 @@ public class Grid extends GlobalSimulation{
 	// The following method is called by the main program each time a new event has been fetched
 	// from the event list in the main loop. 
 	public void treatEvent(Event x){
-		
-		if(x != x.student.nextEvent){
-			return;
+
+		if(x instanceof EnteringEvent){
+			treatEnteringEvent((EnteringEvent) x);
 		}
-		x.student.square.students.remove(
-			x.student
-		);
-		//
-		x.student.talking = false;
-		
-		x.entering_square.students.add(
-			x.student
-		);
-		x.student.square = x.entering_square;
-
-		if(x.student.squares_counter == 0){
-			x.student.direction = randomDirection();
-			x.student.squares_counter = random.nextInt(10) + 1;
+		if(x instanceof StopTalkingEvent){
+			x.student.talking = false;
 		}
-		Square entering_square = enteringSquare(x.student);
-
-		double distance = 
-				Math.sqrt(Math.pow((double)x.student.direction.offset().x,2.0)
-						+ Math.pow((double)x.student.direction.offset().y,2.0));
-
-		double eventTime = x.eventTime + (distance/ x.student.speed);
-
-		for (Student s : x.student.square.students){
-			
-			if(!s.talking && s != x.student){
-				s.talking = true;
-				// insert postponed Event for partner s 
-				Event postponed_event = new Event(s, s.nextEvent.entering_square, s.nextEvent.eventTime + 60.0);
-				insertEvent(postponed_event);
-				s.nextEvent = postponed_event;
-				// ugly but should be fine
-				if(!s.students_met.contains(x.student)){
-					// new friends
-					new_meetings++;
-				}
-				s.students_met.add(x.student);
-				// Set x to talking and postpone eventTime
-				x.student.talking = true;
-				eventTime += 60.0;
-				x.student.students_met.add(s);
-				break; // makes sense , right?
-				
-			}
-		}
-
-		Event newEvent = new Event(x.student, entering_square, eventTime);
-
-		x.student.nextEvent	= newEvent;
-
-		insertEvent(newEvent);
-		
-
 	}
-
 	
 	// The following methods defines what should be done when an event takes place. This could
 	// have been placed in the case in treatEvent, but often it is simpler to write a method if 
@@ -167,16 +122,75 @@ public class Grid extends GlobalSimulation{
 			student.direction = randomDirection();
 			return enteringSquare(student);
 		}
-		
-		
-		
-		
 
 	}
 	public Direction randomDirection(){
-		return Direction.values()[new Random().nextInt(Direction.values().length)];
+		return Direction.values()[random.nextInt(Direction.values().length)];
 	}
 	public boolean outSideGrid(Position newPos){
 		return newPos.x > 19 || newPos.y > 19 || newPos.x < 0 || newPos.y < 0;
+	}
+
+	public void treatEnteringEvent(EnteringEvent x){
+		if(x != x.student.nextEvent){
+			return;
+		}
+		x.student.square.students.remove(
+			x.student
+		);
+		
+		x.entering_square.students.add(
+			x.student
+		);
+
+		x.student.square = x.entering_square;
+		x.student.walkingRoute.add(x.entering_square);
+		if(x.student.squares_counter == 0){
+			x.student.direction = randomDirection();
+			x.student.squares_counter = random.nextInt(10) + 1;
+		}
+		Square entering_square = enteringSquare(x.student);
+
+		double distance = 
+				Math.sqrt(Math.pow((double)x.student.direction.offset().x,2.0)
+						+ Math.pow((double)x.student.direction.offset().y,2.0));
+
+		double eventTime = x.eventTime + (distance/ x.student.speed);
+
+		for (Student s : x.student.square.students){
+			
+			if(!s.talking && s != x.student){
+				x.student.square.Meeting_Counter++;
+				meetings++;
+				s.talking = true;
+				// insert postponed Event for partner s 
+				EnteringEvent postponed_event = new EnteringEvent(s, s.nextEvent.entering_square, s.nextEvent.eventTime + 60.0);
+				insertEvent(postponed_event);
+				s.nextEvent = postponed_event;
+				StopTalkingEvent stop_talking_event_s = new StopTalkingEvent(s , time + talking_time); 
+				insertEvent(stop_talking_event_s);
+				// ugly but should be fine
+				if(!s.students_met.contains(x.student)){
+					// new friends
+					new_meetings++;
+				}
+				s.students_met.add(x.student);
+				// Set x to talking and postpone eventTime
+				x.student.talking = true;
+				eventTime += 60.0;
+				x.student.students_met.add(s);
+				StopTalkingEvent stop_talking_event_x = new StopTalkingEvent(x.student , time + talking_time); 
+				insertEvent(stop_talking_event_x);
+				break; // makes sense , right?
+				
+			}
+		}
+		x.student.squares_counter--;
+		EnteringEvent newEvent = new EnteringEvent(x.student, entering_square, eventTime);
+
+		x.student.nextEvent	= newEvent;
+
+		insertEvent(newEvent);
+
 	}
 }
