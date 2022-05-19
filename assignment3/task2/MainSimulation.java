@@ -35,26 +35,27 @@ public class MainSimulation extends GlobalSimulation{
 		int j = 0;
 		for(SimulationRun run: simulation_list){
 			FileWriter occurencesWriter = new FileWriter("occurencessimulation" +  j + ".csv");
+			FileWriter final_time = new FileWriter("final_time" +  j + ".csv");
 			for(int i=0; i < run.number_of_simulations;i++){
 
-				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter);
+				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter, final_time);
 
 			}
 			j++;
 			occurencesWriter.close();
+			final_time.close();
 		}
-		
 		
 	}
 
 
 
 	public static void runSimulation(BufferedReader reader, int number_of_students, double talking_time,
-			FileWriter writer) throws IOException {
+			FileWriter writer, FileWriter final_time) throws IOException {
 		time = 0;
 		eventList = new EventListClass();
 		Event actEvent;
-		Grid actGrid = new Grid(); // The state that shoud be used
+		Grid actGrid = new Grid(number_of_students); // The state that shoud be used
 		actGrid.talking_time = talking_time;
 		// Some events must be put in the event list at the beginning
 		readFile(reader, actGrid, number_of_students);
@@ -70,7 +71,7 @@ public class MainSimulation extends GlobalSimulation{
 		writeStudentMeetings(actGrid);
 		writeStudentData(actGrid);
 		//
-		writeNumberOccurence(actGrid, writer);
+		writer_to_files(actGrid, writer, final_time);
 
 		System.out.println("Meetings " + actGrid.meetings);
 		System.out.println("time[s]: " + time);
@@ -101,8 +102,10 @@ public class MainSimulation extends GlobalSimulation{
 		return simulation_list;
 	}
 		*/
-	public static void writeNumberOccurence(Grid actGrid, FileWriter writer) throws IOException{
+	public static void writer_to_files(Grid actGrid, FileWriter writer, FileWriter final_time) throws IOException{
 		for(Grid.Student student : actGrid.students){
+			final_time.write("" + student.final_time + System.lineSeparator());
+
 			int[] number_of_meetings = new int[actGrid.students.size()];
 			for(Grid.Student s : student.students_met){
 				number_of_meetings[s.student_id]++;

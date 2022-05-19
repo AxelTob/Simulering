@@ -1,4 +1,6 @@
 import java.util.*;
+
+
 import java.io.*;
 import java.math.*;
 
@@ -8,7 +10,10 @@ public class Grid extends GlobalSimulation{
 	public List<Student> students = new ArrayList<>();
 	public int meetings = 0;
 	public double talking_time;
-	public Grid(){
+	public int number_of_students;
+
+	public Grid(int number_of_students){
+		this.number_of_students = number_of_students;
 		grid = new Square[20][20];
 
 		for (int row = 0; row < grid.length; row++) {
@@ -33,6 +38,8 @@ public class Grid extends GlobalSimulation{
 		public List<Student> students_met = new ArrayList<>();
 		public EnteringEvent nextEvent;
 		public List<Square> walkingRoute = new ArrayList<>();
+		public int unique_meetings = 0;
+		public double final_time;
 	}
 
 	public static class Position {
@@ -172,6 +179,14 @@ public class Grid extends GlobalSimulation{
 				// ugly but should be fine
 				if(!s.students_met.contains(x.student)){
 					// new friends
+					x.student.unique_meetings++;
+					s.unique_meetings++;
+
+					if(x.student.unique_meetings == (number_of_students - 1)){
+			
+						x.student.final_time = time;
+					}
+
 					new_meetings++;
 				}
 				s.students_met.add(x.student);
@@ -181,6 +196,7 @@ public class Grid extends GlobalSimulation{
 				x.student.students_met.add(s);
 				StopTalkingEvent stop_talking_event_x = new StopTalkingEvent(x.student , time + talking_time); 
 				insertEvent(stop_talking_event_x);
+
 				break; // makes sense , right?
 				
 			}
@@ -190,7 +206,11 @@ public class Grid extends GlobalSimulation{
 
 		x.student.nextEvent	= newEvent;
 
+
 		insertEvent(newEvent);
+
+		// check if he has met everyone
+		
 
 	}
 }
