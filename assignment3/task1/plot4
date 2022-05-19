@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
+
+line = input()
+fields = line.split(',')
+N = int(fields[0])
+data = []
+for i in range(N):
+    line = input()
+    fields = line.split(',')
+    runningTime = float(fields[2])
+    data.append(float(fields[0])/runningTime)
+
+xs = [6+n for n in range(N)]
+plt.plot(xs, data, label = "measured")
+
+plt.legend()
+plt.show()
