@@ -15,10 +15,13 @@ class Transmitter extends Proc {
 
     private int strategy;
 
-    public Transmitter(long seed, double transmissionTime, int strategy) {
+    public Transmitter(long seed, double transmissionTime, int strategy,
+            double lb, double ub) {
         this.random = new Random(seed);
         this.transmissionTime = transmissionTime;
         this.strategy = strategy;
+        this.lb = lb;
+        this.ub = ub;
     }
 
     public void setNeighbors(List<Proc> neighbors) {

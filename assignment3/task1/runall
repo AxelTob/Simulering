@@ -3,18 +3,23 @@
 javac *.java || exit
 
 # 1a
-#./gen1 1 | java MainSimulation | ./plot1
+#./gen1 1 0 0 | java MainSimulation | ./plot1
 
 # 1b
-#./gen2 1 | java MainSimulation | ./plot2
+#./gen2 1 0 0 | java MainSimulation | ./plot2
 
 # 1c
-#./gen1 1 | java MainSimulation >res1a.csv
-#./gen1 2 | java MainSimulation >res2a.csv
-#./gen2 1 | java MainSimulation >res1b.csv
-#./gen2 2 | java MainSimulation >res2b.csv
-#./plot3 res1a.csv res2a.csv res1b.csv res2b.csv
+#./gen1 1 0 0 | java MainSimulation >res1a.csv
+#./gen1 2 5 50 | java MainSimulation >res2a.csv
+#./gen1 2 50 200 | java MainSimulation >res3a.csv
+#./gen1 2 200 2000 | java MainSimulation >res4a.csv
+#./gen2 1 0 0 | java MainSimulation >res1b.csv
+#./gen2 2 10 50 | java MainSimulation >res2b.csv
+#./gen2 2 50 200 | java MainSimulation >res3b.csv
+#./gen2 2 200 2000 | java MainSimulation >res4b.csv
+./plot3 res1a.csv res2a.csv res3a.csv res4a.csv \
+        res1b.csv res2b.csv res3b.csv res4b.csv
 
 # 1d
-./gen4 | java MainSimulation >resd.csv
-./plot4 <resd.csv
+#./gen4 | java MainSimulation >resd.csv
+#./plot4 <resd.csv

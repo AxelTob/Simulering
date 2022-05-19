@@ -25,6 +25,8 @@ public class MainSimulation extends Global {
         public int strategy;
         public double runningTime;
         public long seed;
+        public double lb;
+        public double ub;
     }
 
     static class Configuration {
@@ -71,6 +73,8 @@ public class MainSimulation extends Global {
             args.strategy = Integer.parseInt(fields[4]);
             args.runningTime = Double.parseDouble(fields[5]);
             args.seed = Long.parseLong(fields[6]);
+            args.lb = Double.parseDouble(fields[7]);
+            args.ub = Double.parseDouble(fields[8]);
 
             argss.add(args);
         }
@@ -113,7 +117,9 @@ public class MainSimulation extends Global {
                     new Transmitter(
                         Long.hashCode(args.seed) + i,
                         args.transmissionTime,
-                        args.strategy));
+                        args.strategy,
+                        args.lb,
+                        args.ub));
         }
 
         for(int i = 0; i < transmitterArgs.size(); ++i) {

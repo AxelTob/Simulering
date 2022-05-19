@@ -15,6 +15,8 @@ import random
 #  s_t: strategy
 #  t: running time
 #  se: seed
+#  lb: transmitter retry lower bound
+#  ub: transmitter retry upper bound
 #
 # line (N+1)-END: transmitter data
 #  x: x coordinate

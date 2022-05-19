@@ -25,7 +25,6 @@ def runa(filename, label):
 def runb(filename, label):
     file = open(filename)
     line = file.readline()
-    print(line)
     fields = line.split(',')
     #N = int(fields[0])
 
@@ -36,7 +35,6 @@ def runb(filename, label):
     for i in range(num_runs):
         for j in range(run_size):
             line = file.readline()
-            print(line)
             fields = line.split(',')
             data[i,j] = 1.0 - float(fields[0])/float(fields[1])
 
@@ -47,8 +45,13 @@ def runb(filename, label):
     plt.legend()
 
 runa(sys.argv[1], "strategy 1")
-runa(sys.argv[2], "strategy 2")
+runa(sys.argv[2], "strategy 2, [5, 50]")
+runa(sys.argv[3], "strategy 2, [50, 200]")
+runa(sys.argv[4], "strategy 2, [200, 2000]")
 plt.show()
-runb(sys.argv[3], "strategy 1")
-runb(sys.argv[4], "strategy 2")
+
+runb(sys.argv[5], "strategy 1")
+runb(sys.argv[6], "strategy 2, [5, 50]")
+runb(sys.argv[7], "strategy 2, [50, 200]")
+runb(sys.argv[8], "strategy 2, [200, 2000]")
 plt.show()
