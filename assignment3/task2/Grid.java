@@ -151,7 +151,7 @@ public class Grid extends GlobalSimulation{
 		);
 
 		x.student.square = x.entering_square;
-		x.student.walkingRoute.add(x.entering_square);
+		// x.student.walkingRoute.add(x.entering_square);
 		if(x.student.squares_counter == 0){
 			x.student.direction = randomDirection();
 			x.student.squares_counter = random.nextInt(10) + 1;
@@ -171,7 +171,8 @@ public class Grid extends GlobalSimulation{
 				meetings++;
 				s.talking = true;
 				// insert postponed Event for partner s 
-				EnteringEvent postponed_event = new EnteringEvent(s, s.nextEvent.entering_square, s.nextEvent.eventTime + 60.0);
+				EnteringEvent postponed_event =
+						new EnteringEvent(s, s.nextEvent.entering_square, s.nextEvent.eventTime + talking_time);
 				insertEvent(postponed_event);
 				s.nextEvent = postponed_event;
 				StopTalkingEvent stop_talking_event_s = new StopTalkingEvent(s , time + talking_time); 
@@ -187,9 +188,15 @@ public class Grid extends GlobalSimulation{
 						x.student.final_time = time;
 					}
 
+					if(s.unique_meetings == (number_of_students - 1)){
+			
+						s.final_time = time;
+					}
+
 					new_meetings++;
 				}
 				s.students_met.add(x.student);
+				//System.out.println(s.students_met.size());
 				// Set x to talking and postpone eventTime
 				x.student.talking = true;
 				eventTime += 60.0;

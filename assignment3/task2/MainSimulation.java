@@ -35,15 +35,17 @@ public class MainSimulation extends GlobalSimulation{
 		int j = 0;
 		for(SimulationRun run: simulation_list){
 			FileWriter occurencesWriter = new FileWriter("occurencessimulation" +  j + ".csv");
-			FileWriter final_time = new FileWriter("final_time" +  j + ".csv");
+			FileWriter final_time = new FileWriter("final_time_students" +  j + ".csv");
+			FileWriter final_time_system = new FileWriter("final_time_system" +  j + ".csv");
 			for(int i=0; i < run.number_of_simulations;i++){
 
-				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter, final_time);
+				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter, final_time, final_time_system);
 
 			}
 			j++;
 			occurencesWriter.close();
 			final_time.close();
+			final_time_system.close();
 		}
 		
 	}
@@ -51,15 +53,14 @@ public class MainSimulation extends GlobalSimulation{
 
 
 	public static void runSimulation(BufferedReader reader, int number_of_students, double talking_time,
-			FileWriter writer, FileWriter final_time) throws IOException {
-		time = 0;
+			FileWriter writer, FileWriter final_time, FileWriter final_time_system) throws IOException {
 		eventList = new EventListClass();
 		Event actEvent;
 		Grid actGrid = new Grid(number_of_students); // The state that shoud be used
 		actGrid.talking_time = talking_time;
 		// Some events must be put in the event list at the beginning
 		readFile(reader, actGrid, number_of_students);
-		
+
 		// The main simulation loop
 		while (actGrid.new_meetings < (number_of_students*(number_of_students-1)/2)){
 			actEvent = eventList.fetchEvent();
@@ -67,15 +68,16 @@ public class MainSimulation extends GlobalSimulation{
 			actGrid.treatEvent(actEvent);
 		}
 
-		writeMeetingsPerSquare(actGrid);
-		writeStudentMeetings(actGrid);
-		writeStudentData(actGrid);
+		//writeMeetingsPerSquare(actGrid);
+		//writeStudentMeetings(actGrid);
+		//writeStudentData(actGrid);
 		//
-		writer_to_files(actGrid, writer, final_time);
+		writer_to_files(actGrid, writer, final_time, final_time_system);
 
 		System.out.println("Meetings " + actGrid.meetings);
 		System.out.println("time[s]: " + time);
 		
+		time = 0;
 		// Printing the result of the simulation, in this case a mean value
 	
 	}
@@ -102,10 +104,10 @@ public class MainSimulation extends GlobalSimulation{
 		return simulation_list;
 	}
 		*/
-	public static void writer_to_files(Grid actGrid, FileWriter writer, FileWriter final_time) throws IOException{
+	public static void writer_to_files(Grid actGrid, FileWriter writer, FileWriter final_time, FileWriter final_time_system) throws IOException{
+		final_time_system.write("" + time + System.lineSeparator());
 		for(Grid.Student student : actGrid.students){
 			final_time.write("" + student.final_time + System.lineSeparator());
-
 			int[] number_of_meetings = new int[actGrid.students.size()];
 			for(Grid.Student s : student.students_met){
 				number_of_meetings[s.student_id]++;
@@ -118,9 +120,10 @@ public class MainSimulation extends GlobalSimulation{
 	}
 
 	public static void readFile(BufferedReader reader, Grid actGrid, int number_of_students) throws IOException {
-		String line = reader.readLine();
+		
 		int student_id = 0;
-		while(line != null && student_id < number_of_students) {
+		while(student_id < number_of_students) {
+			String line = reader.readLine();
 			var fields = line.split(",");
 			var student = actGrid.new Student();
 			student.student_id = student_id;
@@ -132,7 +135,6 @@ public class MainSimulation extends GlobalSimulation{
 			EnteringEvent firstEvent = new EnteringEvent(student, student.square, 0.0);
 			student.nextEvent = firstEvent;
 			insertEvent(firstEvent);
-			line = reader.readLine();
 			actGrid.students.add(student);
 			student_id++;
 		}

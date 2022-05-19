@@ -6,7 +6,7 @@ N = 20*1000
 
 random.seed(123)
 
-# Positions for students
+
 for _ in range(N):
     x = random.randint(0, 19)
     y = random.randint(0, 19)
