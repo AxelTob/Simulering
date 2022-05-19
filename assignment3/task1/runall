@@ -1,0 +1,19 @@
+#!/bin/sh
+
+javac *.java || exit
+
+# 1a
+#./gen1 1 | java MainSimulation | ./plot1
+
+# 1b
+#./gen2 1 | java MainSimulation | ./plot2
+
+# 1c
+#./gen1 1 | java MainSimulation >res1a.csv
+./gen1 2 | java MainSimulation >res2a.csv
+#./gen2 1 | java MainSimulation >res1b.csv
+./gen2 2 | java MainSimulation >res2b.csv
+./plot3 res1a.csv res2a.csv res1b.csv res2b.csv
+
+#./gen3 | java MainSimulation | ./plot3
+#./gen4 | java MainSimulation | ./plot4

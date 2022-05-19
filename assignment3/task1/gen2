@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+
+import random
+
+# format: csv
+#
+# line 0:
+#  N: number of simulations
+#
+# line 1-N:
+#  n: number of transmitters
+#  t_s: mean time between transmissions
+#  T_p: transmission time
+#  r: transmitter radius
+#  s_t: strategy
+#  t: running time
+#  se: seed
+#
+# line (N+1)-END: transmitter data
+#  x: x coordinate
+#  y: y coordinate
+#  s: time of first transmission
+
+import sys
+
+random.seed(1337)
+
+num_runs = 10
+run_size = 10
+N=num_runs*run_size
+print(N)
+for m in range(num_runs):
+    for n in range(run_size):
+        print(f"{(n+1)*1000},4000,1,7,{sys.argv[1]},10000,{10*m+n}")
+
+# Transmitter positions/startTime
+for _ in range(10000):
+    x = random.uniform(0.0, 10.0)
+    y = random.uniform(0.0, 10.0)
+    start_time = random.expovariate(1.0/4000.0)
+    print(f"{x},{y},{start_time}")
