@@ -3,12 +3,15 @@
 import matplotlib.pyplot as plt
 import math
 
-N = int(input())
+line = input()
+fields = line.split(',')
+N = int(fields[0])
 data = []
 for i in range(N):
     line = input()
     fields = line.split(',')
-    data.append(float(fields[0])/100000)
+    runningTime = float(fields[2])
+    data.append(float(fields[0])/runningTime)
 
 xs = [(n+1)*1000 for n in range(N)]
 plt.plot(xs, data, label = "measured")

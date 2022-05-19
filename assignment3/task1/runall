@@ -1,0 +1,8 @@
+#!/bin/sh
+
+javac *.java || exit
+
+#./gen1 | java MainSimulation | ./plot1
+./gen2 | java MainSimulation | ./plot2
+#./gen3 | java MainSimulation | ./plot3
+#./gen4 | java MainSimulation | ./plot4
