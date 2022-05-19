@@ -13,6 +13,8 @@ import random
 #  T_p: transmission time
 #  r: transmitter radius
 #  s_t: strategy
+#  t: running time
+#  se: seed
 #
 # line (N+1)-END: transmitter data
 #  x: x coordinate
@@ -21,10 +23,13 @@ import random
 
 random.seed(1337)
 
-N=10
+num_runs = 10
+run_size = 10
+N=num_runs*run_size
 print(N)
-for n in range(N):
-    print(f"{(n+1)*1000},4000,1,7,1")
+for m in range(num_runs):
+    for n in range(run_size):
+        print(f"{(n+1)*1000},4000,1,7,1,10000,{10*m+n}")
 
 # Transmitter positions/startTime
 for _ in range(10000):

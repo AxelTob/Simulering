@@ -22,6 +22,9 @@ public class MainSimulation extends Global {
         public double meanSleepTime;
         public double transmissionTime;
         public double radius;
+        public int strategy;
+        public double runningTime;
+        public long seed;
     }
 
     static class Configuration {
@@ -65,6 +68,9 @@ public class MainSimulation extends Global {
             args.meanSleepTime = Double.parseDouble(fields[1]);
             args.transmissionTime = Double.parseDouble(fields[2]);
             args.radius = Double.parseDouble(fields[3]);
+            args.strategy = Integer.parseInt(fields[4]);
+            args.runningTime = Double.parseDouble(fields[5]);
+            args.seed = Long.parseLong(fields[6]);
 
             argss.add(args);
         }
@@ -103,7 +109,11 @@ public class MainSimulation extends Global {
 
         var transmitters = new ArrayList<Transmitter>();
         for(int i = 0; i < transmitterArgs.size(); ++i) {
-            transmitters.add(new Transmitter(i, args.transmissionTime));
+            transmitters.add(
+                    new Transmitter(
+                        Long.hashCode(args.seed) + i,
+                        args.transmissionTime,
+                        args.strategy));
         }
 
         for(int i = 0; i < transmitterArgs.size(); ++i) {
@@ -143,7 +153,7 @@ public class MainSimulation extends Global {
     	while(true) {
     		Signal actSignal = SignalList.FetchSignal();
     		time = actSignal.arrivalTime;
-            if(time > 100000) {
+            if(time > args.runningTime) {
                 break;
             }
     		actSignal.destination.TreatSignal(actSignal);
@@ -151,6 +161,7 @@ public class MainSimulation extends Global {
 
         System.out.println(""
                 + gateway.successfulTransmissions + ","
-                + transmissionCounter.totalTransmissions);
+                + transmissionCounter.totalTransmissions + ","
+                + args.runningTime);
     }
 }
