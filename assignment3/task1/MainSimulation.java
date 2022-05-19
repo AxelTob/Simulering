@@ -37,7 +37,7 @@ public class MainSimulation extends Global {
         public double startTime;
     }
 
-    public static void main(String[] dummy) throws IOException {
+    public static void main(String[] argv) throws IOException {
         var configuration = loadConfiguration();
         System.out.println(configuration.argss.size());
         for(var args : configuration.argss) {
