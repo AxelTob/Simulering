@@ -39,7 +39,7 @@ public class MainSimulation extends GlobalSimulation{
 			FileWriter final_time_system = new FileWriter("final_time_system" +  j + ".csv");
 			for(int i=0; i < run.number_of_simulations;i++){
 
-				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter, final_time, final_time_system);
+				runSimulation(i, reader, run.number_of_students, run.talking_time, occurencesWriter, final_time, final_time_system);
 
 			}
 			j++;
@@ -52,11 +52,11 @@ public class MainSimulation extends GlobalSimulation{
 
 
 
-	public static void runSimulation(BufferedReader reader, int number_of_students, double talking_time,
+	public static void runSimulation(long seed, BufferedReader reader, int number_of_students, double talking_time,
 			FileWriter writer, FileWriter final_time, FileWriter final_time_system) throws IOException {
 		eventList = new EventListClass();
 		Event actEvent;
-		Grid actGrid = new Grid(number_of_students); // The state that shoud be used
+		Grid actGrid = new Grid(seed, number_of_students); // The state that shoud be used
 		actGrid.talking_time = talking_time;
 		// Some events must be put in the event list at the beginning
 		readFile(reader, actGrid, number_of_students);

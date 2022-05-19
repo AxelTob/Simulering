@@ -11,8 +11,10 @@ public class Grid extends GlobalSimulation{
 	public int meetings = 0;
 	public double talking_time;
 	public int number_of_students;
+	public Random random;
 
-	public Grid(int number_of_students){
+	public Grid(long seed, int number_of_students){
+		random = new Random(seed);
 		this.number_of_students = number_of_students;
 		grid = new Square[20][20];
 
@@ -96,7 +98,7 @@ public class Grid extends GlobalSimulation{
 	// e.g. for measurements
 	
 
-	Random random = new Random(); // This is just a random number generator
+	
 	
 	
 	// The following method is called by the main program each time a new event has been fetched
