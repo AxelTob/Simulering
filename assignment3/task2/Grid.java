@@ -89,7 +89,7 @@ public class Grid extends GlobalSimulation{
 	// e.g. for measurements
 	
 
-	Random random = new Random(1); // This is just a random number generator
+	Random random = new Random(); // This is just a random number generator
 	
 	
 	// The following method is called by the main program each time a new event has been fetched

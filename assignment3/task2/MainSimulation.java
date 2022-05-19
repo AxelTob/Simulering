@@ -11,26 +11,37 @@ public class MainSimulation extends GlobalSimulation{
 		double speed; // m/s
 		double talking_time ; // s
 
-		public SimulationRun(int number_of_simulations, int number_of_students, double speed, double talking_time){
+		public SimulationRun(int number_of_simulations, int number_of_students, double talking_time){
 			this.number_of_simulations = number_of_simulations;
 			this.number_of_students = number_of_students;
-			this.speed = speed;
 			this.talking_time = talking_time;
 		}
 	
 	}
 	
     public static void main(String[] args) throws IOException {
-		List<SimulationRun> simulation_list = new ArrayList();
-		SimulationRun simulation_run_1 = new SimulationRun(1, 20, 2.0, 60.0);
-		simulation_list.add(simulation_run_1);
+		List<SimulationRun> simulation_list = new ArrayList<>();
+		var reader =
+            new BufferedReader(
+                new InputStreamReader( System.in ) );
 
+		SimulationRun simulation_run_1 = new SimulationRun(1000, 20, 60.0);
+		SimulationRun simulation_run_2 = new SimulationRun(1000, 20, 60.0);
+		SimulationRun simulation_run_3 = new SimulationRun(1000, 20, 60.0);
+
+		simulation_list.add(simulation_run_1);
+		simulation_list.add(simulation_run_2);
+		simulation_list.add(simulation_run_3);
+		int j = 0;
 		for(SimulationRun run: simulation_list){
+			FileWriter occurencesWriter = new FileWriter("occurencessimulation" +  j + ".csv");
 			for(int i=0; i < run.number_of_simulations;i++){
 
-				runSimulation(run.number_of_students, run.speed, run.talking_time);
+				runSimulation(reader, run.number_of_students, run.talking_time, occurencesWriter);
 
 			}
+			j++;
+			occurencesWriter.close();
 		}
 		
 		
@@ -38,25 +49,29 @@ public class MainSimulation extends GlobalSimulation{
 
 
 
-	public static void runSimulation(int number_of_students, double speed, double talking_time) throws IOException {
+	public static void runSimulation(BufferedReader reader, int number_of_students, double talking_time,
+			FileWriter writer) throws IOException {
+		time = 0;
+		eventList = new EventListClass();
 		Event actEvent;
 		Grid actGrid = new Grid(); // The state that shoud be used
 		actGrid.talking_time = talking_time;
 		// Some events must be put in the event list at the beginning
-		readFile(actGrid, number_of_students, speed);
+		readFile(reader, actGrid, number_of_students);
 		
 		// The main simulation loop
-		while (actGrid.new_meetings < 190){
+		while (actGrid.new_meetings < (number_of_students*(number_of_students-1)/2)){
 			actEvent = eventList.fetchEvent();
 			time = actEvent.eventTime;
 			actGrid.treatEvent(actEvent);
-			System.out.println(actGrid.new_meetings);
 		}
 
 		writeMeetingsPerSquare(actGrid);
 		writeStudentMeetings(actGrid);
-
 		writeStudentData(actGrid);
+		//
+		writeNumberOccurence(actGrid, writer);
+
 		System.out.println("Meetings " + actGrid.meetings);
 		System.out.println("time[s]: " + time);
 		
@@ -86,22 +101,31 @@ public class MainSimulation extends GlobalSimulation{
 		return simulation_list;
 	}
 		*/
-	public static void readFile(Grid actGrid, int number_of_students, double speed) throws IOException {
-		var reader =
-            new BufferedReader(
-                new InputStreamReader( System.in ) );
+	public static void writeNumberOccurence(Grid actGrid, FileWriter writer) throws IOException{
+		for(Grid.Student student : actGrid.students){
+			int[] number_of_meetings = new int[actGrid.students.size()];
+			for(Grid.Student s : student.students_met){
+				number_of_meetings[s.student_id]++;
+			}
+
+			for(int n : number_of_meetings){
+				writer.write("" + n + System.lineSeparator());
+			}
+		}
+	}
+
+	public static void readFile(BufferedReader reader, Grid actGrid, int number_of_students) throws IOException {
 		String line = reader.readLine();
 		int student_id = 0;
 		while(line != null && student_id < number_of_students) {
 			var fields = line.split(",");
 			var student = actGrid.new Student();
-			System.out.println("x :" + fields[0] + " y : " + fields[1]);
 			student.student_id = student_id;
 			student.square = actGrid.grid[Integer.parseInt(fields[0])][Integer.parseInt(fields[1])];
-			student.speed = speed;
 			student.talking = false;
 			student.direction = Grid.Direction.values()[Integer.parseInt(fields[2])];
 			student.squares_counter = Integer.parseInt(fields[3]);
+			student.speed = Double.parseDouble(fields[4]);
 			EnteringEvent firstEvent = new EnteringEvent(student, student.square, 0.0);
 			student.nextEvent = firstEvent;
 			insertEvent(firstEvent);
