@@ -1,7 +1,43 @@
 #!/bin/sh
 
-javac *.java || exit
+runSimulations() {
+    javac *.java || exit
 
+    parallel ::: \
+    './gen1 1 0 0 | java MainSimulation >resa.csv && echo 1a' \
+    './gen2 1 0 0 | java MainSimulation >resb.csv && echo 1b' \
+    './gen1 1 0 0 | java MainSimulation >resc1a.csv && echo 1c1' \
+    './gen1 2 5 50 | java MainSimulation >resc2a.csv && echo 1c2' \
+    './gen1 2 50 200 | java MainSimulation >resc3a.csv && echo 1c3' \
+    './gen1 2 200 2000 | java MainSimulation >resc4a.csv && echo 1c4' \
+    './gen1 2 500 550 | java MainSimulation >resc5a.csv && echo 1c5' \
+    './gen2 1 0 0 | java MainSimulation >resc1b.csv && echo 1c6' \
+    './gen2 2 10 50 | java MainSimulation >resc2b.csv && echo 1c7' \
+    './gen2 2 50 200 | java MainSimulation >resc3b.csv && echo 1c8' \
+    './gen2 2 200 2000 | java MainSimulation >resc4b.csv && echo 1c9' \
+    './gen2 2 500 550 | java MainSimulation >resc5b.csv && echo 1c10' \
+    './gen4 | java MainSimulation >resd.csv && echo 1d'
+}
+
+plot() {
+    javac *.java || exit
+
+    # 1a
+    ./plot1 <resa.csv
+
+    # 1b
+    ./plot2 <resb.csv
+
+    # 1c
+    ./plot3 resc1a.csv resc2a.csv resc3a.csv resc4a.csv resc5a.csv \
+            resc1b.csv resc2b.csv resc3b.csv resc4b.csv resc5b.csv
+
+    # 1d
+    ./plot4 <resd.csv
+}
+
+runSimulations
+plot
 # 1a
 #./gen1 1 0 0 | java MainSimulation | ./plot1
 
@@ -17,8 +53,8 @@ javac *.java || exit
 #./gen2 2 10 50 | java MainSimulation >res2b.csv
 #./gen2 2 50 200 | java MainSimulation >res3b.csv
 #./gen2 2 200 2000 | java MainSimulation >res4b.csv
-./plot3 res1a.csv res2a.csv res3a.csv res4a.csv \
-        res1b.csv res2b.csv res3b.csv res4b.csv
+#./plot3 res1a.csv res2a.csv res3a.csv res4a.csv \
+#        res1b.csv res2b.csv res3b.csv res4b.csv
 
 # 1d
 #./gen4 | java MainSimulation >resd.csv

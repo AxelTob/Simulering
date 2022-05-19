@@ -44,11 +44,11 @@ class Transmitter extends Proc {
 
                 return;
             }
+
+            var signal = new Signal();
+            signal.arrivalTime = time;
+            signal.signalType = ARRIVAL;
             for(var neighbor : neighbors) {
-                var signal = new Signal();
-                signal.destination = neighbor;
-                signal.arrivalTime = time;
-                signal.signalType = ARRIVAL;
                 neighbor.TreatSignal(signal);
             }
 

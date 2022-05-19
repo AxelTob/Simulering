@@ -22,5 +22,8 @@ G = lam*T
 theoretical = [(n+1)*1000*G*math.exp(-2*G*(n+1)*1000) for n in range(N)]
 plt.plot(xs, theoretical, label = "theoretical")
 
+plt.xlabel("No. transmitters")
+plt.ylabel("Throughput")
 plt.legend()
+plt.savefig("a.png")
 plt.show()

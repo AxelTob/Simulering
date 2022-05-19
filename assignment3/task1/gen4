@@ -28,7 +28,7 @@ random.seed(1337)
 N=6
 print(N)
 for n in range(N):
-    print(f"{2000},4000,1,{6+n},2,20000,420")
+    print(f"{2000},4000,1,{6+n},2,20000,420,50,200")
 
 # Transmitter positions/startTime
 for _ in range(10000):

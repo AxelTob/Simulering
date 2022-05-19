@@ -16,4 +16,8 @@ xs = [6+n for n in range(N)]
 plt.plot(xs, data, label = "measured")
 
 plt.legend()
+plt.xlabel("Transmitter radius [m]")
+plt.ylabel("Throughput")
+
+plt.savefig('d.png')
 plt.show()

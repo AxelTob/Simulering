@@ -20,7 +20,6 @@ def runa(filename, label):
     xs = [(n+1)*1000 for n in range(N)]
     plt.plot(xs, data, label=label)
 
-    plt.legend()
 
 def runb(filename, label):
     file = open(filename)
@@ -42,16 +41,27 @@ def runb(filename, label):
     std = np.std(data, axis=0)
     xs = [(n+1)*1000 for n in range(10)]
     plt.fill_between(xs, mean+1.96*std, mean-1.96*std, label=label)
-    plt.legend()
 
 runa(sys.argv[1], "strategy 1")
 runa(sys.argv[2], "strategy 2, [5, 50]")
 runa(sys.argv[3], "strategy 2, [50, 200]")
 runa(sys.argv[4], "strategy 2, [200, 2000]")
+runa(sys.argv[5], "strategy 2, [500, 550]")
+plt.legend()
+plt.xlabel("No. transmitters")
+plt.ylabel("Throughput")
+
+plt.savefig('c1.png')
 plt.show()
 
-runb(sys.argv[5], "strategy 1")
-runb(sys.argv[6], "strategy 2, [5, 50]")
-runb(sys.argv[7], "strategy 2, [50, 200]")
-runb(sys.argv[8], "strategy 2, [200, 2000]")
+runb(sys.argv[6], "strategy 1")
+runb(sys.argv[7], "strategy 2, [5, 50]")
+runb(sys.argv[8], "strategy 2, [50, 200]")
+runb(sys.argv[9], "strategy 2, [200, 2000]")
+runb(sys.argv[10], "strategy 2, [500, 550]")
+plt.legend(loc='lower right')
+plt.xlabel("No. transmitters")
+plt.ylabel("Packet drop probability")
+
+plt.savefig('c2.png')
 plt.show()
