@@ -21,6 +21,8 @@ import random
 #  y: y coordinate
 #  s: time of first transmission
 
+import sys
+
 random.seed(1337)
 
 num_runs = 10
@@ -29,7 +31,7 @@ N=num_runs*run_size
 print(N)
 for m in range(num_runs):
     for n in range(run_size):
-        print(f"{(n+1)*1000},4000,1,7,1,10000,{10*m+n}")
+        print(f"{(n+1)*1000},4000,1,7,{sys.argv[1]},10000,{10*m+n}")
 
 # Transmitter positions/startTime
 for _ in range(10000):

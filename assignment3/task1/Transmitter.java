@@ -10,8 +10,8 @@ class Transmitter extends Proc {
     private double meanSleepTime = 4000;
     private double lastInterruption = -1e50;
 
-    private double lb = 0.0;
-    private double ub = 0.0;
+    private double lb = 10.0;
+    private double ub = 20.0;
 
     private int strategy;
 
@@ -27,13 +27,19 @@ class Transmitter extends Proc {
 
 	public void TreatSignal(Signal x)  {
         switch(x.signalType) {
-        case TRANSMIT: {
+        case ARRIVAL: {
+            lastInterruption = time;
+        }
+
+        break; case TRANSMIT: {
             if(strategy == STRATEGY2
                     && time < lastInterruption + transmissionTime) {
                 SignalList.SendSignal(
                         TRANSMIT,
                         this,
                         time+uniformRandom(lb, ub));
+
+                return;
             }
             for(var neighbor : neighbors) {
                 var signal = new Signal();
@@ -47,8 +53,9 @@ class Transmitter extends Proc {
                     TRANSMISSION_DONE,
                     this,
                     time+transmissionTime);
-        } break;
-        case TRANSMISSION_DONE: {
+        }
+
+        break; case TRANSMISSION_DONE: {
             SignalList.SendSignal(
                     TRANSMIT,
                     this,
